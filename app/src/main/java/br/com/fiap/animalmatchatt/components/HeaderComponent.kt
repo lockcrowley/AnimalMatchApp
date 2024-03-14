@@ -50,7 +50,7 @@ fun HeaderComponent() {
                 ) {
                     Icon(
                         imageVector = Icons.Default.Menu,
-                        contentDescription = "",
+                        contentDescription = "Menu Icon",
                         tint = colorResource(id = R.color.green_light),
                         modifier = Modifier
                             .width(100.dp)
