@@ -10,6 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import br.com.fiap.animalmatchatt.screens.adoptionProcess.AdoptionProcess
+import br.com.fiap.animalmatchatt.screens.animalRegister.AnimalRegisterScreen
 import br.com.fiap.animalmatchatt.screens.profile.ProfileScreen
 import br.com.fiap.animalmatchatt.screens.registeredAnimals.RegisteredAnimalScreen
 import br.com.fiap.animalmatchatt.ui.theme.AnimalMatchAttTheme
@@ -25,7 +27,9 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 //                    ProfileScreen()
-                    RegisteredAnimalScreen()
+//                    RegisteredAnimalScreen()
+//                    AdoptionProcess()
+                    AnimalRegisterScreen()
                 }
             }
         }

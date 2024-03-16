@@ -1,4 +1,4 @@
-package br.com.fiap.animalmatchatt.screens.registeredAnimals
+package br.com.fiap.animalmatchatt.screens.adoptionProcess
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -38,14 +38,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.fiap.animalmatchatt.R.*
-import br.com.fiap.animalmatchatt.components.ColumnRegisterListComponent
+import br.com.fiap.animalmatchatt.components.ColumnProcessListComponent
 import br.com.fiap.animalmatchatt.components.HeaderComponent
+import br.com.fiap.animalmatchatt.components.StatusCardComponent
 import br.com.fiap.animalmatchatt.components.TitleComponent
 import br.com.fiap.animalmatchatt.repository.getAllAnimalsBySearch
 
 @Composable
-fun RegisteredAnimalScreen () {
-
+fun AdoptionProcess () {
     var searchTextState by remember {
         mutableStateOf("")
     }
@@ -72,12 +72,12 @@ fun RegisteredAnimalScreen () {
             modifier = Modifier.padding(vertical = 10.dp)
         ){
             TitleComponent(
-                title = "Cadastros",
-                colorText = color.green_light,
+                title = "Processo de Adoção",
+                colorText = color.orange,
                 nameProfileFontSize = 25.sp
             )
         }
-        
+
         Spacer(modifier = Modifier.height(25.dp))
 
         Box{
@@ -92,12 +92,12 @@ fun RegisteredAnimalScreen () {
                     .height(52.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = colorResource(id = color.green_light),
-                    focusedBorderColor = colorResource(id = color.green_light)
+                    unfocusedBorderColor = colorResource(id = color.orange),
+                    focusedBorderColor = colorResource(id = color.orange)
                 ),
                 placeholder = {
                     Text(
-                        text = "Ache seu pet",
+                        text = "Procure pelos processos",
                         fontFamily = poppyns,
                         color = colorResource(id = color.gray_title)
                     )
@@ -119,38 +119,38 @@ fun RegisteredAnimalScreen () {
 
         Column {
             Row(
-                modifier = Modifier.padding(horizontal = 55.dp)
+                modifier = Modifier.padding(horizontal = 30.dp).offset(x = 20.dp)
             ) {
                 TitleComponent(
                     title = "Nome",
-                    colorText = color.green_light,
-                    nameProfileFontSize = 20.sp
+                    colorText = color.orange,
+                    nameProfileFontSize = 18.sp
                 )
-                Spacer(modifier = Modifier.width(52.dp))
+                Spacer(modifier = Modifier.width(33.dp))
 
                 TitleComponent(
-                    title = "Tipo",
-                    colorText = color.green_light,
-                    nameProfileFontSize = 20.sp
+                    title = "Tempo",
+                    colorText = color.orange,
+                    nameProfileFontSize = 18.sp
                 )
 
-                Spacer(modifier = Modifier.width(52.dp))
+                Spacer(modifier = Modifier.width(30.dp))
 
                 TitleComponent(
-                    title = "Raça",
-                    colorText = color.green_light,
-                    nameProfileFontSize = 20.sp
+                    title = "Status Adoção",
+                    colorText = color.orange,
+                    nameProfileFontSize = 18.sp
                 )
             }
 
             Row {
-                LazyColumn(modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    ) {
+                LazyColumn(modifier = Modifier.fillMaxWidth().padding(12.dp),
+                ) {
                     items(listAnimals) {
-                        ColumnRegisterListComponent(
+                        ColumnProcessListComponent(
                             animals = it
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(15.dp))
                     }
                 }
             }
@@ -158,26 +158,26 @@ fun RegisteredAnimalScreen () {
     }
 
     Canvas(
-        modifier = Modifier.height(10.dp).width(10.dp).offset(x = (-68).dp, y = 230.dp)
+        modifier = Modifier.height(10.dp).width(10.dp).offset(x = (-75).dp, y = 230.dp)
     ) {
         drawLine(
-            color = Color.Green,
+            color = Color(0xFFFF8B6A),
             start = Offset(size.width/ 2, 10f),
             end = Offset(size.width / 2, 999f),
-            strokeWidth = 2.2f,
+            strokeWidth = 1.5f,
             cap = StrokeCap.Round,
             pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 10f), 0f)
         )
     }
 
     Canvas(
-        modifier = Modifier.height(10.dp).width(10.dp).offset(x = 38.dp, y = 230.dp)
+        modifier = Modifier.height(10.dp).width(10.dp).offset(x = 10.dp, y = 230.dp)
     ) {
         drawLine(
-            color = Color.Green,
+            color = Color(0xFFFF8B6A),
             start = Offset(size.width/ 2, 10f),
             end = Offset(size.width / 2, 999f),
-            strokeWidth = 1.2f,
+            strokeWidth = 1.5f,
             cap = StrokeCap.Round,
             pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 10f), 0f)
         )
