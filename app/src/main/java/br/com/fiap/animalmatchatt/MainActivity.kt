@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import br.com.fiap.animalmatchatt.screens.profile.ProfileScreen
+import br.com.fiap.animalmatchatt.screens.registeredAnimals.RegisteredAnimalScreen
 import br.com.fiap.animalmatchatt.ui.theme.AnimalMatchAttTheme
 
 class MainActivity : ComponentActivity() {
@@ -23,7 +24,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ProfileScreen()
+//                    ProfileScreen()
+                    RegisteredAnimalScreen()
                 }
             }
         }
