@@ -6,6 +6,7 @@ data class Animals(
     val type: String = "",
     val race: String = "",
     val time: String = "",
-    val status: String = ""
+    val status: String = "",
+    val imageAnimal: Int = 0
 )
 

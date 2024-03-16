@@ -68,13 +68,15 @@ fun ProfileImageComponent (
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = nameProfile,
             color = colorResource(id = R.color.gray_title),
             fontFamily = poppyns,
             fontSize = nameProfileFontSize
         )
+
+        Spacer(modifier = Modifier.height(20.dp))
 
     }
 }

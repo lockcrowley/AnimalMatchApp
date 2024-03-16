@@ -11,14 +11,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 
 import androidx.compose.foundation.layout.width
 
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -37,6 +41,7 @@ import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.HashtagBoxComponent
 import br.com.fiap.animalmatchatt.components.HeaderComponent
 import br.com.fiap.animalmatchatt.components.ProfileImageComponent
+import br.com.fiap.animalmatchatt.repository.getAllAnimals
 
 @Composable
 
@@ -78,6 +83,8 @@ fun ProfileScreen() {
                             fontWeight = FontWeight.ExtraBold
                         )
 
+                        Spacer(modifier = Modifier.height(10.dp))
+
                         Text(
                             text = "Pata Voluntaria",
                             color = colorResource(id = color.gray_title),
@@ -94,7 +101,7 @@ fun ProfileScreen() {
         Box (
             modifier = Modifier
                 .padding(horizontal = 50.dp)
-                .offset(y = (-20).dp)
+                .offset(y = (-65).dp)
         ) {
             Text(
                 text = "A ONG Pata Voluntária é um grupo dedicado de pessoas que se unem para resgatar e proteger animais em situação de vulnerabilidade.",
@@ -109,7 +116,7 @@ fun ProfileScreen() {
                 .padding(horizontal = 55.dp)
                 .height(90.dp)
                 .width(310.dp)
-                .offset(y = (-10).dp)
+                .offset(y = (-50).dp)
         ) {
             Row (
                 modifier = Modifier
@@ -136,7 +143,7 @@ fun ProfileScreen() {
         Box (
             modifier = Modifier
                 .padding(horizontal = 50.dp)
-                .offset(y = (-20).dp, x = (-48).dp)
+                .offset(y = (-65).dp, x = (-48).dp)
         ) {
             Row (verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -162,103 +169,50 @@ fun ProfileScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            Row (
-                horizontalArrangement = Arrangement.SpaceAround
+            LazyColumn(
+                modifier = Modifier
+                    .offset(y = (-40).dp, x = (18).dp)
             ) {
-                ProfileImageComponent(
-                    imageProfile = drawable.mini_cat,
-                    description = "Olivia",
-                    sizeImage = 70.dp,
-                    imageBorderColor = color.green_light,
-                    borderWidth = 2.dp,
-                    nameProfile = "Olivia",
-                    nameProfileFontSize = 12.sp
-                )
-                Spacer(modifier = Modifier.width(25.dp))
+                items(getAllAnimals().chunked(3)) {
+                    Row (horizontalArrangement = Arrangement.SpaceAround) {
+                        for (animal in it) {
+                            ProfileImageComponent(
+                                imageProfile = animal.imageAnimal,
+                                description = animal.name,
+                                sizeImage = 70.dp,
+                                imageBorderColor = color.green_light,
+                                borderWidth = 2.dp,
+                                nameProfile = animal.name,
+                                nameProfileFontSize = 12.sp
+                            )
 
-                ProfileImageComponent(
-                    imageProfile = drawable.mini_dog,
-                    description = "Jorge",
-                    sizeImage = 70.dp,
-                    imageBorderColor = color.green_light,
-                    borderWidth = 2.dp,
-                    nameProfile = "Jorge",
-                    nameProfileFontSize = 12.sp
-                )
-                Spacer(modifier = Modifier.width(25.dp))
-
-                ProfileImageComponent(
-                    imageProfile = drawable.white_cat,
-                    description = "Luna",
-                    sizeImage = 70.dp,
-                    imageBorderColor = color.green_light,
-                    borderWidth = 2.dp,
-                    nameProfile = "Luna",
-                    nameProfileFontSize = 12.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.height(15.dp))
-
-            Row (
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                ProfileImageComponent(
-                    imageProfile = drawable.sausage_dog,
-                    description = "Sofhi",
-                    sizeImage = 70.dp,
-                    imageBorderColor = color.green_light,
-                    borderWidth = 2.dp,
-                    nameProfile = "Sofhi",
-                    nameProfileFontSize = 12.sp
-                )
-                Spacer(modifier = Modifier.width(25.dp))
-
-                ProfileImageComponent(
-                    imageProfile = drawable.cat,
-                    description = "Chico",
-                    sizeImage = 70.dp,
-                    imageBorderColor = color.green_light,
-                    borderWidth = 2.dp,
-                    nameProfile = "Chico",
-                    nameProfileFontSize = 12.sp
-                )
-                Spacer(modifier = Modifier.width(25.dp))
-
-                ProfileImageComponent(
-                    imageProfile = drawable.dog,
-                    description = "Sushi",
-                    sizeImage = 70.dp,
-                    imageBorderColor = color.green_light,
-                    borderWidth = 2.dp,
-                    nameProfile = "Sushi",
-                    nameProfileFontSize = 12.sp
-                )
+                            Spacer(modifier = Modifier.width(30.dp))
+                        }
+                    }
+                }
             }
         }
+    }
 
-        Row (
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 40.dp)
-                .offset(y = (-120).dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Icon arrow back",
-                modifier = Modifier
-                    .width(20.dp)
-                    .height(20.dp)
-            )
+    Box (
+        modifier = Modifier
+            .offset(y = (620).dp, x = (145).dp)
+    ) {
+        Icon(
+            painter = painterResource(id = drawable.baseline_arrow_downward_24),
+            contentDescription = "",
+            tint = colorResource(id = color.gray_title),
+        )
+    }
 
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = "Icon arrow forward",
-                modifier = Modifier
-                    .width(20.dp)
-                    .height(20.dp)
-            )
-        }
+    Box (
+        modifier = Modifier
+            .offset(y = (620).dp, x = (245).dp)
+    ) {
+        Icon(
+            painter = painterResource(id = drawable.baseline_arrow_downward_24),
+            contentDescription = "",
+            tint = colorResource(id = color.gray_title),
+        )
     }
 }

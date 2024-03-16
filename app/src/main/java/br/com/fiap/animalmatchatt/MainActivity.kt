@@ -26,10 +26,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    ProfileScreen()
+                    ProfileScreen()
 //                    RegisteredAnimalScreen()
 //                    AdoptionProcess()
-                    AnimalRegisterScreen()
+//                    AnimalRegisterScreen()
                 }
             }
         }
