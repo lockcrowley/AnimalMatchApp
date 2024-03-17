@@ -52,12 +52,9 @@ fun ProfileScreen() {
 
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(top = 60.dp)
     ) {
-        Box(
-            modifier = Modifier.padding(10.dp),
-        ) {
-            HeaderComponent()
-        }
 
         Box(modifier = Modifier
             .padding(20.dp)

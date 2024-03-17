@@ -45,15 +45,10 @@ fun AnimalRegisterScreen() {
     Column (
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(),
+            .fillMaxHeight()
+            .padding(top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Box(
-            modifier = Modifier.padding(10.dp),
-        ) {
-            HeaderComponent()
-        }
-
         Box(
             modifier = Modifier.padding(vertical = 10.dp)
         ) {

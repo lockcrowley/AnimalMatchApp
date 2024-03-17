@@ -12,16 +12,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -29,9 +28,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.fiap.animalmatchatt.R
+import kotlinx.coroutines.launch
 
 @Composable
-fun HeaderComponent() {
+fun HeaderComponent(
+    drawerAction: () -> Unit
+) {
+    val coroutineScope = rememberCoroutineScope()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
     val poppyns = FontFamily(
         Font(R.font.poppins_regular)
     )
@@ -45,7 +50,9 @@ fun HeaderComponent() {
                 verticalAlignment = Alignment.CenterVertically
             ){
                 IconButton(
-                    onClick = {},
+                    onClick = {
+                        drawerAction()
+                    },
                     modifier = Modifier.offset(y = (-3).dp, x = (-15).dp).width(95.dp).height(50.dp)
                 ) {
                     Icon(

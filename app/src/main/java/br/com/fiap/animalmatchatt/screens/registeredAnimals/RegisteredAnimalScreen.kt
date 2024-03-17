@@ -59,14 +59,9 @@ fun RegisteredAnimalScreen () {
     )
 
     Column (
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+        modifier = Modifier.padding(top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Box(
-            modifier = Modifier.padding(10.dp),
-        ) {
-            HeaderComponent()
-        }
 
         Box(
             modifier = Modifier.padding(vertical = 10.dp)
@@ -158,20 +153,20 @@ fun RegisteredAnimalScreen () {
     }
 
     Canvas(
-        modifier = Modifier.height(10.dp).width(10.dp).offset(x = (-68).dp, y = 230.dp)
+        modifier = Modifier.height(10.dp).width(10.dp).offset(x = (139).dp, y = 230.dp)
     ) {
         drawLine(
             color = Color.Green,
             start = Offset(size.width/ 2, 10f),
             end = Offset(size.width / 2, 999f),
-            strokeWidth = 2.2f,
+            strokeWidth = 1.2f,
             cap = StrokeCap.Round,
             pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 10f), 0f)
         )
     }
 
     Canvas(
-        modifier = Modifier.height(10.dp).width(10.dp).offset(x = 38.dp, y = 230.dp)
+        modifier = Modifier.height(10.dp).width(10.dp).offset(x = 237.dp, y = 230.dp)
     ) {
         drawLine(
             color = Color.Green,

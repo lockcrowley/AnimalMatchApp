@@ -40,12 +40,11 @@ import androidx.compose.ui.unit.sp
 import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.ColumnProcessListComponent
 import br.com.fiap.animalmatchatt.components.HeaderComponent
-import br.com.fiap.animalmatchatt.components.StatusCardComponent
 import br.com.fiap.animalmatchatt.components.TitleComponent
 import br.com.fiap.animalmatchatt.repository.getAllAnimalsBySearch
 
 @Composable
-fun AdoptionProcess () {
+fun AdoptionProcessScreen () {
     var searchTextState by remember {
         mutableStateOf("")
     }
@@ -59,14 +58,9 @@ fun AdoptionProcess () {
     )
 
     Column (
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+        modifier = Modifier.padding(top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Box(
-            modifier = Modifier.padding(10.dp),
-        ) {
-            HeaderComponent()
-        }
 
         Box(
             modifier = Modifier.padding(vertical = 10.dp)
@@ -158,7 +152,7 @@ fun AdoptionProcess () {
     }
 
     Canvas(
-        modifier = Modifier.height(10.dp).width(10.dp).offset(x = (-75).dp, y = 230.dp)
+        modifier = Modifier.height(10.dp).width(10.dp).offset(x = (126).dp, y = 230.dp)
     ) {
         drawLine(
             color = Color(0xFFFF8B6A),
@@ -171,7 +165,7 @@ fun AdoptionProcess () {
     }
 
     Canvas(
-        modifier = Modifier.height(10.dp).width(10.dp).offset(x = 10.dp, y = 230.dp)
+        modifier = Modifier.height(10.dp).width(10.dp).offset(x = 215.dp, y = 230.dp)
     ) {
         drawLine(
             color = Color(0xFFFF8B6A),
