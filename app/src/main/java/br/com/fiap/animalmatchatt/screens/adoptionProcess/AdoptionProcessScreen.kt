@@ -158,7 +158,7 @@ fun AdoptionProcessScreen () {
                     }
 
                     items(listAnimalsState.value) {
-                        ColumnRegisterListComponent(
+                        ColumnProcessListComponent(
                             animals = it
                         )
                         Spacer(modifier = Modifier.height(16.dp))
