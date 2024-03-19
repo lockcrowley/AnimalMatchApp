@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,8 @@ import br.com.fiap.animalmatchatt.components.ButtonComponent
 import br.com.fiap.animalmatchatt.components.HeaderComponent
 import br.com.fiap.animalmatchatt.components.TextFieldComponent
 import br.com.fiap.animalmatchatt.components.TitleComponent
+import br.com.fiap.animalmatchatt.database.repository.AnimalRepository
+import br.com.fiap.animalmatchatt.model.Animals
 
 @Composable
 fun AnimalRegisterScreen() {
@@ -41,6 +44,15 @@ fun AnimalRegisterScreen() {
         mutableStateOf("")
     }
 
+    val context = LocalContext.current
+    val animalRepository = AnimalRepository(context)
+
+    val animal = Animals(
+        id = 0,
+        name = animalName,
+        type = animalType,
+        race = animalRace
+    )
 
     Column (
         modifier = Modifier
@@ -77,6 +89,9 @@ fun AnimalRegisterScreen() {
 
                 TextFieldComponent(
                     fieldValue = animalName,
+                    onFieldChange = {
+                        animalName = it
+                    },
                     placeholderValue =  "Nome do pet",
                     iconImage = painterResource(id = drawable.baseline_pets_24)
                 )
@@ -85,6 +100,9 @@ fun AnimalRegisterScreen() {
 
                 TextFieldComponent(
                     fieldValue = animalType,
+                    onFieldChange = {
+                        animalType = it
+                    },
                     placeholderValue =  "Tipo do pet",
                     iconImage = painterResource(id = drawable.baseline_type_animal_24)
                 )
@@ -93,6 +111,9 @@ fun AnimalRegisterScreen() {
 
                 TextFieldComponent(
                     fieldValue = animalRace,
+                    onFieldChange = {
+                        animalRace = it
+                    },
                     placeholderValue =  "Raça do pet",
                     iconImage = painterResource(id = drawable.sharp_pet_supplies_24)
                 )
@@ -102,7 +123,9 @@ fun AnimalRegisterScreen() {
                 ButtonComponent(
                     textField = "Cadastrar",
                     fontTextButton = 20.sp,
-                    colorButton = color.orange
+                    colorButton = color.orange,
+                    animal = animal,
+                    animalRepository = animalRepository
                 )
             }
         }

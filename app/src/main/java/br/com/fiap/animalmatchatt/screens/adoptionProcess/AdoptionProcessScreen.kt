@@ -32,6 +32,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -39,8 +40,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.ColumnProcessListComponent
+import br.com.fiap.animalmatchatt.components.ColumnRegisterListComponent
 import br.com.fiap.animalmatchatt.components.HeaderComponent
 import br.com.fiap.animalmatchatt.components.TitleComponent
+import br.com.fiap.animalmatchatt.database.repository.AnimalRepository
 import br.com.fiap.animalmatchatt.repository.getAllAnimalsBySearch
 
 @Composable
@@ -56,6 +59,13 @@ fun AdoptionProcessScreen () {
     val poppyns = FontFamily(
         Font(font.poppins_regular)
     )
+
+    val context = LocalContext.current
+    val animalRepository = AnimalRepository(context)
+
+    var listAnimalsState = remember {
+        mutableStateOf(animalRepository.listAnimal())
+    }
 
     Column (
         modifier = Modifier.padding(top = 60.dp),
@@ -145,6 +155,13 @@ fun AdoptionProcessScreen () {
                             animals = it
                         )
                         Spacer(modifier = Modifier.height(15.dp))
+                    }
+
+                    items(listAnimalsState.value) {
+                        ColumnRegisterListComponent(
+                            animals = it
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }

@@ -21,6 +21,7 @@ import br.com.fiap.animalmatchatt.R.*
 @Composable
 fun TextFieldComponent(
     fieldValue: String,
+    onFieldChange: (String) -> Unit,
     placeholderValue: String,
     iconImage: Painter
 ) {
@@ -34,7 +35,7 @@ fun TextFieldComponent(
         OutlinedTextField(
             value = fieldValue,
             onValueChange = {
-
+                onFieldChange(it)
             },
             modifier = Modifier
                 .width(330.dp)

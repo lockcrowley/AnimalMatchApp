@@ -1,6 +1,5 @@
 package br.com.fiap.animalmatchatt.components
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,15 +14,17 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import br.com.fiap.animalmatchatt.R.*
+import br.com.fiap.animalmatchatt.database.repository.AnimalRepository
+import br.com.fiap.animalmatchatt.model.Animals
 
 @Composable
 fun ButtonComponent (
     textField: String,
     fontTextButton: TextUnit,
     colorButton: Int,
-//    buttonFn: () -> Unit
+    animal: Animals,
+    animalRepository: AnimalRepository
 ) {
     val poppyns = FontFamily(
         Font(font.poppins_regular)
@@ -31,7 +32,7 @@ fun ButtonComponent (
 
     Button(
         onClick = {
-//            buttonFn()
+            animalRepository.save(animal)
         },
         modifier = Modifier
             .width(300.dp)

@@ -8,7 +8,6 @@ fun getAllAnimals(): List<Animals> {
     return listOf(
         Animals(id = 1, name = "Penelope", type = "Gato", race = "Siamês", time = "2 dias", status = "Aprovado", drawable.white_cat),
         Animals(id = 2, name = "Jorge", type = "Cachorro", race = "Pug", time = "6 dias", status = "Pendente", imageAnimal = drawable.mini_dog),
-        Animals(id = 3, name = "Flash", type = "Cachorro", race = "Poodle", time = "8 dias", status = "Aprovado", imageAnimal = drawable.mini_dog),
         Animals(id = 4, name = "Thor", type = "Cachorro", race = "Labrador", time = "12 dias", status = "Cancelado", imageAnimal = drawable.dog),
         Animals(id = 5, name = "Olivia", type = "Gato", race = "Persa", time = "12 dias", status = "Pendente", imageAnimal = drawable.mini_cat),
         Animals(id = 6, name = "Panqueca", type = "Cachorro", race = "Buldogue", time = "26 dias", status = "Aprovado", imageAnimal = drawable.mini_dog),
