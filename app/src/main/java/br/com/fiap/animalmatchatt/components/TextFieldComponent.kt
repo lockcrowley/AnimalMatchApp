@@ -3,6 +3,7 @@ package br.com.fiap.animalmatchatt.components
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -15,6 +16,9 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import br.com.fiap.animalmatchatt.R.*
 
@@ -23,7 +27,9 @@ fun TextFieldComponent(
     fieldValue: String,
     onFieldChange: (String) -> Unit,
     placeholderValue: String,
-    iconImage: Painter
+    iconImage: Painter,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
     val poppyns = FontFamily(
         Font(font.poppins_regular)
@@ -58,7 +64,9 @@ fun TextFieldComponent(
                     contentDescription = "",
                     tint = colorResource(id = color.green_light)
                 )
-            }
+            },
+            keyboardOptions = keyboardOptions,
+            visualTransformation = visualTransformation
         )
     }
 }
