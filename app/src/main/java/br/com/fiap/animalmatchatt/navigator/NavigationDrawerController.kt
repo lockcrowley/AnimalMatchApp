@@ -3,6 +3,7 @@ package br.com.fiap.animalmatchatt.navigator
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +21,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -31,31 +36,63 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.HeaderComponent
+import br.com.fiap.animalmatchatt.model.ErrorResponse
+import br.com.fiap.animalmatchatt.model.UserLoginReturn
 import br.com.fiap.animalmatchatt.screens.adoptionProcess.AdoptionProcessScreen
 import br.com.fiap.animalmatchatt.screens.animalRegister.AnimalRegisterScreen
-import br.com.fiap.animalmatchatt.screens.profile.ProfileScreen
+import br.com.fiap.animalmatchatt.screens.confirmProcess.ConfirmationScreen
+import br.com.fiap.animalmatchatt.screens.editAnimal.EditAnimalScreen
+import br.com.fiap.animalmatchatt.screens.editProfile.EditProfileScreen
+import br.com.fiap.animalmatchatt.screens.profileOng.ProfileOngScreen
+import br.com.fiap.animalmatchatt.screens.profileUser.ProfileUserScreen
 import br.com.fiap.animalmatchatt.screens.registeredAnimals.RegisteredAnimalScreen
+import br.com.fiap.animalmatchatt.screens.userLogin.LoginScreen
+import br.com.fiap.animalmatchatt.services.AuthService
+import br.com.fiap.animalmatchatt.services.RetrofitFactory
+import br.com.fiap.animalmatchatt.utils.TokenManager
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.net.URLDecoder
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun NavigationController () {
+fun NavigationDrawerController () {
     val navigationController = rememberNavController()
     val coroutineScope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val context = LocalContext.current.applicationContext
+    val retrofitFactory = RetrofitFactory()
+    val authService = retrofitFactory.create(AuthService::class.java)
+    val tokenManager = TokenManager(context)
 
+    var userJson by remember { mutableStateOf<String?>(null) }
+
+    userJson = tokenManager.getUser()
+
+    val decodedUserJson = URLDecoder.decode(userJson, "UTF-8")
+    val user = Gson().fromJson(decodedUserJson, UserLoginReturn::class.java)
     var screenWidth = LocalConfiguration.current.screenWidthDp.dp
     screenWidth /= 2
 
     val poppyns = FontFamily(
         Font(font.poppins_regular)
     )
+
+    val initialDestination = if (user.isOng == true) {
+        "profileOng"
+    } else {
+        "profileUser"
+    }
+
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -71,34 +108,38 @@ fun NavigationController () {
                         .fillMaxWidth()
                         .padding(horizontal = 5.dp)
                 ){
-                    Row () {
-                        Text(
-                            text = "Bem vinda, ",
-                            color = colorResource(id = color.orange),
-                            fontFamily = poppyns,
-                            fontSize = 18.sp
-                        )
+                    Column {
+                        Row () {
+                            Text(
+                                text = "Bem vindo(a),",
+                                color = colorResource(id = color.orange),
+                                fontFamily = poppyns,
+                                fontSize = 18.sp
+                            )
 
-                        Text(
-                            text = "ONG",
-                            color = colorResource(id = color.orange),
-                            fontFamily = poppyns,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                        )
+                            if(user.isOng == true) {
+                                Text(
+                                    text = "Ong",
+                                    color = colorResource(id = color.orange),
+                                    fontFamily = poppyns,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                )
+                            }
+                        }
+
+                        Box (modifier = Modifier
+                            .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = user.name,
+                                color = colorResource(id = color.orange),
+                                fontFamily = poppyns,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                            )
+                        }
                     }
-                }
-
-                Box (modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 5.dp)) {
-                    Text(
-                        text = "Pata Voluntária" ,
-                        color = colorResource(id = color.orange),
-                        fontFamily = poppyns,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                    )
                 }
 
                 HorizontalDivider()
@@ -126,7 +167,8 @@ fun NavigationController () {
                         coroutineScope.launch {
                             drawerState.close()
                         }
-                        navigationController.navigate(Screens.ProfileScreen.screen) {
+
+                        navigationController.navigate(initialDestination) {
                             popUpTo(0)
                         }
                     }
@@ -226,18 +268,46 @@ fun NavigationController () {
                         )
                     },
                     onClick = {
+                        authService.userLogout().enqueue(object : Callback<Void> {
+                            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                                if (response.isSuccessful) {
+                                    tokenManager.clearUser()
+                                    tokenManager.clearTokens()
+
+                                    Toast.makeText(context, "Logout", Toast.LENGTH_SHORT).show()
+                                    navigationController.navigate("login"){
+                                        popUpTo(0)
+                                    }
+                                }  else {
+                                    val errorBody = response.errorBody()?.string()
+                                    val errorMessage = if (errorBody != null) {
+                                        try {
+                                            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+                                            errorResponse.error
+                                        } catch (e: Exception) {
+                                            "Erro ao tentar deslogar, tente novamente!"
+                                        }
+                                    } else {
+                                        "Erro ao tentar deslogar, tente novamente!"
+                                    }
+                                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                }
+                            }
+
+                            override fun onFailure(call: Call<Void>, t: Throwable) {
+                                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        })
+
                         coroutineScope.launch {
                             drawerState.close()
                         }
-                        Toast.makeText(context, "Logout", Toast.LENGTH_SHORT).show()
                     }
                 )
             }
         }) {
         Scaffold(
             topBar = {
-                val coroutineScope = rememberCoroutineScope()
-
                 HeaderComponent{
                     coroutineScope.launch {
                         drawerState.open()
@@ -247,12 +317,18 @@ fun NavigationController () {
         ) {
             NavHost(
                 navController = navigationController,
-                startDestination = Screens.ProfileScreen.screen,
+                startDestination = initialDestination,
             ) {
-                composable(Screens.ProfileScreen.screen){ ProfileScreen()}
+                composable(Screens.ProfileUserScreen.screen){ ProfileUserScreen(navigationController) }
+                composable(Screens.ProfileOngScreen.screen){ ProfileOngScreen(navigationController) }
+                composable(Screens.EditScreen.screen){ EditProfileScreen(navigationController) }
                 composable(Screens.RegisteredAnimalScreen.screen){ RegisteredAnimalScreen() }
                 composable(Screens.AdoptionProcessScreen.screen){ AdoptionProcessScreen() }
                 composable(Screens.AnimalRegisterScreen.screen){ AnimalRegisterScreen() }
+                composable(Screens.ConfirmationScreen.screen) { ConfirmationScreen(navigationController) }
+                composable(Screens.EditAnimalScreen.screen) { EditAnimalScreen(navigationController) }
+
+                composable(Screens.LoginUserScreen.screen){ LoginScreen(navigationController) }
             }
         }
     }

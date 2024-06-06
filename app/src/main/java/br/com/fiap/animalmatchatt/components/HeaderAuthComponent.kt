@@ -31,7 +31,7 @@ import br.com.fiap.animalmatchatt.navigator.Screens
 @Composable
 fun HeaderAuthComponent(
     navController: NavController,
-    loginScreen: Boolean
+    icon: Boolean
 ) {
     val poppyns = FontFamily(
         Font(R.font.poppins_regular)
@@ -45,10 +45,10 @@ fun HeaderAuthComponent(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ){
-                if(!loginScreen) {
+                if(icon) {
                     IconButton(
                         onClick = {
-                            navController.navigate(Screens.ProfileScreen.screen)
+                            navController.navigate("login")
                         },
                         modifier = Modifier.offset(y = (-3).dp, x = (-15).dp).width(95.dp).height(50.dp)
                     ) {

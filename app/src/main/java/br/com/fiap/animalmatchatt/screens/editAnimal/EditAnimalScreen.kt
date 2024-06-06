@@ -1,24 +1,19 @@
-package br.com.fiap.animalmatchatt.screens.registerUsers
+package br.com.fiap.animalmatchatt.screens.editAnimal
 
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
-import androidx.compose.material3.Text
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,97 +21,102 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.ButtonComponent
-import br.com.fiap.animalmatchatt.components.HeaderAuthComponent
 import br.com.fiap.animalmatchatt.components.TextFieldComponent
 import br.com.fiap.animalmatchatt.components.TitleComponent
+import br.com.fiap.animalmatchatt.model.EditResponse
 import br.com.fiap.animalmatchatt.model.ErrorResponse
 import br.com.fiap.animalmatchatt.model.User
-import br.com.fiap.animalmatchatt.services.AuthService
+import br.com.fiap.animalmatchatt.model.UserLoginReturn
 import br.com.fiap.animalmatchatt.services.RetrofitFactory
+import br.com.fiap.animalmatchatt.services.UserService
+import br.com.fiap.animalmatchatt.utils.TokenManager
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.URLDecoder
 
 @Composable
-fun RegisterUsersScreen(navController: NavController) {
+fun EditAnimalScreen(navController: NavController) {
+    val context = LocalContext.current.applicationContext
+    val tokenManager = TokenManager(context)
+    val userJson = tokenManager.getUser()
+
+    val decodedUserJson = userJson?.let {
+        URLDecoder.decode(it, "UTF-8")
+    } ?: ""
+
+    val user = Gson().fromJson(decodedUserJson, UserLoginReturn::class.java)
+
     var userName by remember() {
-        mutableStateOf("")
+        mutableStateOf(user.name)
     }
 
     var userEmail by remember {
-        mutableStateOf("")
-    }
-
-    var userPassword by remember {
-        mutableStateOf("")
+        mutableStateOf(user.email)
     }
 
     var userPhone by remember {
-        mutableStateOf("")
+        mutableStateOf(user.phone)
     }
 
     var userResidence by remember {
-        mutableStateOf("")
+        mutableStateOf(user.residence)
     }
 
     var userWantAdopt by remember {
-        mutableStateOf("")
+        mutableStateOf(user.wantToAdopt)
     }
 
     var userStreet by remember {
-        mutableStateOf("")
+        mutableStateOf(user.address.street)
     }
 
     var userCity by remember {
-        mutableStateOf("")
+        mutableStateOf(user.address.city)
     }
 
     var userState by remember {
-        mutableStateOf("")
+        mutableStateOf(user.address.state)
     }
 
     var userCountry by remember {
-        mutableStateOf("")
+        mutableStateOf(user.address.country)
     }
 
     var userZipCode by remember {
-        mutableStateOf("")
+        mutableStateOf(user.address.zipCode)
     }
 
     var userDesc by remember {
-        mutableStateOf("")
+        mutableStateOf(user.description)
     }
 
-    var isOng by remember {
-        mutableStateOf(-1)
-    }
+    var isOng = user.isOng
 
-    var ongOrUser = isOng == 0
+    val destinationScreen = if (isOng == true) {
+        "profile"
+    } else {
+        "profileUser"
+    }
 
     val retrofitFactory = RetrofitFactory()
-    val authService = retrofitFactory.create(AuthService::class.java)
-    val context = LocalContext.current.applicationContext
+    val userService = retrofitFactory.create(UserService::class.java)
 
-    val newUser = User(
+    val newAnimal = User(
         _id = null,
         name = userName,
         email = userEmail,
-        password = userPassword,
+        password = null,
         phone = userPhone,
         residence = userResidence,
         wantToAdopt = userWantAdopt,
@@ -129,8 +129,8 @@ fun RegisterUsersScreen(navController: NavController) {
         hashtags = null,
         resetToken = "",
         image = "",
-        isOng = ongOrUser,
-        adoptedAnimals = 0
+        isOng = isOng!!,
+        adoptedAnimals = null
     )
 
     Column (
@@ -139,13 +139,13 @@ fun RegisterUsersScreen(navController: NavController) {
             .fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        HeaderAuthComponent(navController, icon = true)
+        Spacer(modifier = Modifier.height(40.dp))
 
         Box(
             modifier = Modifier.padding(vertical = 10.dp)
         ) {
             TitleComponent(
-                title = "Cadastre-se",
+                title = "Edite seu perfil",
                 colorText = color.gray_title,
                 nameProfileFontSize = 24.sp
             )
@@ -189,21 +189,6 @@ fun RegisterUsersScreen(navController: NavController) {
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Email
                         ),
-                    )
-
-                    Spacer(modifier = Modifier.height(30.dp))
-
-                    TextFieldComponent(
-                        fieldValue = userPassword,
-                        onFieldChange = {
-                            userPassword = it
-                        },
-                        placeholderValue =  "Password",
-                        iconImage = painterResource(id = drawable.baseline_lock_person_24),
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Password
-                        ),
-                        visualTransformation = PasswordVisualTransformation()
                     )
 
                     Spacer(modifier = Modifier.height(30.dp))
@@ -318,7 +303,7 @@ fun RegisterUsersScreen(navController: NavController) {
                     Spacer(modifier = Modifier.height(30.dp))
 
                     TextFieldComponent(
-                        fieldValue = userDesc,
+                        fieldValue = userDesc!!,
                         onFieldChange = {
                             userDesc = it
                         },
@@ -326,66 +311,50 @@ fun RegisterUsersScreen(navController: NavController) {
                         iconImage = painterResource(id = drawable.baseline_short_text_24)
                     )
 
-                    Spacer(modifier = Modifier.height(30.dp))
-
-                    Row (verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(
-                            selected = isOng == 0,
-                            onClick = {
-                                isOng = 0
-                            },
-                            colors = RadioButtonDefaults.colors(
-                                selectedColor = Color.Black,
-                                unselectedColor = Color(0xFFFFFFFF)
-                            )
-                        )
-                        Text(text = "Ong", color = colorResource(id = color.white))
-
-                        RadioButton(
-                            selected = isOng == 1,
-                            onClick = {
-                                isOng = 1
-                            },
-                            colors = RadioButtonDefaults.colors(
-                                selectedColor = Color.Black,
-                                unselectedColor = Color(0xFFFFFFFF)
-                            )
-                        )
-                        Text(text = "Usuário Padrão", color = colorResource(id = color.white))
-                    }
-
                     Spacer(modifier = Modifier.height(40.dp))
 
                     ButtonComponent(
-                        textField = "Cadastrar",
+                        textField = "Editar",
                         fontTextButton = 20.sp,
                         colorButton = color.orange,
                         onClick = {
-                            authService.createUser(user = newUser).enqueue(object : Callback<User> {
-                                override fun onResponse(call: Call<User>, response: Response<User>) {
-                                    if (response.isSuccessful) {
-                                        Toast.makeText(context, "Perfil criado com sucesso!", Toast.LENGTH_SHORT).show()
-                                        navController.navigate("login")
-                                    } else {
-                                        val errorBody = response.errorBody()?.string()
-                                        val errorMessage = if (errorBody != null) {
-                                            try {
-                                                val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-                                                errorResponse.error
-                                            } catch (e: Exception) {
-                                                "Erro ao criar usuário"
-                                            }
-                                        } else {
-                                            "Erro ao criar usuário"
-                                        }
-                                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-
-                                override fun onFailure(call: Call<User>, t: Throwable) {
-                                    Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-                                }
-                            })
+//                            userService.editProfile(token, user = newUser,).enqueue(object : Callback<EditResponse> {
+//                                override fun onResponse(call: Call<EditResponse>, response: Response<EditResponse>) {
+//                                    if (response.isSuccessful) {
+//                                        val loginResponse = response.body()
+//                                        val userJsonUpdated = Uri.encode(Gson().toJson(loginResponse))
+//
+//                                        tokenManager.clearUser()
+//
+//                                        if (token != null && userJsonUpdated != null) {
+//                                            tokenManager.saveAccessToken(token, userJsonUpdated)
+//                                            Toast.makeText(context, "Perfil atualizado com sucesso!", Toast.LENGTH_SHORT).show()
+//                                            navController.navigate("") {
+//                                                navController.popBackStack()
+//                                            }
+//                                        }
+//
+//
+//                                    } else {
+//                                        val errorBody = response.errorBody()?.string()
+//                                        val errorMessage = if (errorBody != null) {
+//                                            try {
+//                                                val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+//                                                errorResponse.error
+//                                            } catch (e: Exception) {
+//                                                "Erro ao atualizar animal"
+//                                            }
+//                                        } else {
+//                                            "Erro ao atualizar animal"
+//                                        }
+//                                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+//                                    }
+//                                }
+//
+//                                override fun onFailure(call: Call<EditResponse>, t: Throwable) {
+//                                    Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+//                                }
+//                            })
                         }
                     )
 

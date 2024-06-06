@@ -1,31 +1,33 @@
 package br.com.fiap.animalmatchatt.navigator
 
+
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import br.com.fiap.animalmatchatt.screens.ProfileAnimal.ProfileAnimalScreen
+import br.com.fiap.animalmatchatt.screens.adopteAnimal.AdopteAnimalScreen
+import br.com.fiap.animalmatchatt.screens.confirmProcess.ConfirmationScreen
+import br.com.fiap.animalmatchatt.screens.forgotPassword.ForgotPasswordScreen
 import br.com.fiap.animalmatchatt.screens.registerUsers.RegisterUsersScreen
+import br.com.fiap.animalmatchatt.screens.resetPassword.ResetPasswordScreen
 import br.com.fiap.animalmatchatt.screens.userLogin.LoginScreen
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun NavigationAuthController() {
     val navController = rememberNavController()
-
-    Scaffold() {
         NavHost(
             navController = navController,
-            startDestination = Screens.LoginUserScreen.screen,
-            exitTransition = {
-                slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End)
-            }
+            startDestination = "reset",
         ) {
-            composable(Screens.RegisterUserScreen.screen){ RegisterUsersScreen(navController) }
             composable(Screens.LoginUserScreen.screen){ LoginScreen(navController) }
-            composable(Screens.ProfileScreen.screen){ NavigationController() }
+            composable(Screens.RegisterUserScreen.screen){ RegisterUsersScreen(navController) }
+            composable(Screens.DrawerScreen.screen) { NavigationDrawerController() }
+            composable(Screens.DrawerScreen.screen) { NavigationDrawerController() }
+            composable(Screens.ForgotPasswordScreen.screen) { ForgotPasswordScreen(navController) }
+            composable(Screens.ResetPasswordScreen.screen) { ResetPasswordScreen(navController) }
         }
-    }
 }

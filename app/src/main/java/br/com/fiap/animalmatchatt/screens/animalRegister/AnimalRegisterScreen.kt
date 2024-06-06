@@ -1,5 +1,6 @@
 package br.com.fiap.animalmatchatt.screens.animalRegister
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -124,8 +125,10 @@ fun AnimalRegisterScreen() {
                     textField = "Cadastrar",
                     fontTextButton = 20.sp,
                     colorButton = color.orange,
-                    animal = animal,
-                    animalRepository = animalRepository
+                    onClick = {
+                        animalRepository.save(animal)
+                        Toast.makeText(context, "Cadastro criado com sucesso!!", Toast.LENGTH_SHORT).show()
+                    }
                 )
             }
         }

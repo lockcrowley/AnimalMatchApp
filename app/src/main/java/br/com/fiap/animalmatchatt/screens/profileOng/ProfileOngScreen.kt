@@ -1,4 +1,4 @@
-package br.com.fiap.animalmatchatt.screens.profile
+package br.com.fiap.animalmatchatt.screens.profileOng
 
 
 import androidx.compose.foundation.layout.Arrangement
@@ -29,21 +29,33 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.HashtagBoxComponent
 import br.com.fiap.animalmatchatt.components.ProfileImageComponent
 import br.com.fiap.animalmatchatt.database.repository.AnimalRepository
+import br.com.fiap.animalmatchatt.model.UserLoginReturn
 import br.com.fiap.animalmatchatt.repository.getAllAnimals
+import br.com.fiap.animalmatchatt.utils.TokenManager
+import com.google.gson.Gson
+import java.net.URLDecoder
 
 @Composable
 
-fun ProfileScreen() {
+fun ProfileOngScreen(navController: NavController) {
+    val context = LocalContext.current.applicationContext
+    val tokenManager = TokenManager(context)
+    val userJson = tokenManager.getUser()
+
+    val decodedUserJson = URLDecoder.decode(userJson, "UTF-8")
+
+    val user = Gson().fromJson(decodedUserJson, UserLoginReturn::class.java)
+
+    val animalRepository = AnimalRepository(context)
+
     val poppyns = FontFamily(
         Font(font.poppins_regular)
     )
-
-    val context = LocalContext.current
-    val animalRepository = AnimalRepository(context)
 
     var listAnimalsState = remember {
         mutableStateOf(animalRepository.listAnimal())
@@ -72,7 +84,7 @@ fun ProfileScreen() {
                 ) {
                     Column {
                         Text(
-                            text = "ONG",
+                            text = user.name,
                             color = colorResource(id = color.gray_title),
                             fontFamily = poppyns,
                             fontSize = 35.sp,

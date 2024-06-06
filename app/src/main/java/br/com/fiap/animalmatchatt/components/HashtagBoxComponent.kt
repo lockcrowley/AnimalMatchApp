@@ -33,14 +33,14 @@ fun HashtagBoxComponent (
         colors = CardDefaults
             .cardColors(containerColor = colorResource(id = idColor)),
         shape = RoundedCornerShape(3.dp),
-        modifier = Modifier.height(18.dp)
+        modifier = Modifier.height(20.dp)
     ){
         Text(
             text = tag,
             color = colorResource(id = color.white),
             fontFamily = poppyns,
             fontWeight = FontWeight.Bold,
-            fontSize = 12.sp,
+            fontSize = 14.sp,
             modifier = Modifier
                 .padding(horizontal = 4.dp)
                 .offset(y = (-3.5).dp)
