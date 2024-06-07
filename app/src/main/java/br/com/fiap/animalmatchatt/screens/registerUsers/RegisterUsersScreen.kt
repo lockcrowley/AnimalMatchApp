@@ -54,6 +54,10 @@ import retrofit2.Response
 
 @Composable
 fun RegisterUsersScreen(navController: NavController) {
+    val retrofitFactory = RetrofitFactory()
+    val authService = retrofitFactory.create(AuthService::class.java)
+    val context = LocalContext.current.applicationContext
+
     var userName by remember() {
         mutableStateOf("")
     }
@@ -107,10 +111,6 @@ fun RegisterUsersScreen(navController: NavController) {
     }
 
     var ongOrUser = isOng == 0
-
-    val retrofitFactory = RetrofitFactory()
-    val authService = retrofitFactory.create(AuthService::class.java)
-    val context = LocalContext.current.applicationContext
 
     val newUser = User(
         _id = null,

@@ -1,5 +1,4 @@
 package br.com.fiap.animalmatchatt.model
-import com.google.gson.annotations.SerializedName
 data class User(
     val _id: String?,
     val name: String,
@@ -60,9 +59,28 @@ data class EditResponse(
     val user: UserLoginReturn
 )
 
+data class EditUser(
+    val name: String,
+    val email: String,
+    val phone: String,
+    val residence: String,
+    val wantToAdopt: String,
+    val description: String?,
+    val hashtags: List<String>?,
+    val street: String,
+    val city: String,
+    val state: String,
+    val zipCode: String,
+    val country: String,
+    val resetToken: String?,
+    val image: String?,
+    val isOng: Boolean,
+    val adoptedAnimals: Int?
+)
+
 data class ResetPasswordRequest(
-    val token: String,
-    val newPassword: String
+    val resetToken: String,
+    val password: String
 )
 
 data class ForgotPasswordRequest(
@@ -70,9 +88,8 @@ data class ForgotPasswordRequest(
 )
 
 data class PasswordChangeRequest(
-    @SerializedName("oldPassword")
-    val oldPassword: String,
-    @SerializedName("newPassword")
-    val newPassword: String
+    val currentPassword: String,
+    val newPassword: String,
+    val confirmPassword: String
 )
 

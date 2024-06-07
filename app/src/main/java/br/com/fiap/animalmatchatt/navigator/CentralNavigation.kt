@@ -23,6 +23,9 @@ fun CentralNavigation(navController: NavHostController) {
         mutableStateOf("loading")
     }
 
+//    tokenManager.clearTokens()
+//    tokenManager.clearUser()
+
     var token by remember { mutableStateOf<String?>(null) }
     var userJson by remember { mutableStateOf<String?>(null) }
 

@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -34,6 +35,7 @@ import br.com.fiap.animalmatchatt.components.ButtonComponent
 import br.com.fiap.animalmatchatt.components.TextFieldComponent
 import br.com.fiap.animalmatchatt.components.TitleComponent
 import br.com.fiap.animalmatchatt.model.EditResponse
+import br.com.fiap.animalmatchatt.model.EditUser
 import br.com.fiap.animalmatchatt.model.ErrorResponse
 import br.com.fiap.animalmatchatt.model.User
 import br.com.fiap.animalmatchatt.model.UserLoginReturn
@@ -52,12 +54,12 @@ fun EditProfileScreen(navController: NavController) {
     val tokenManager = TokenManager(context)
     val userJson = tokenManager.getUser()
     val token = tokenManager.getAccessToken()
-
+    val retrofitFactory = RetrofitFactory()
+    val userService = retrofitFactory.create(UserService::class.java)
 
     val decodedUserJson = userJson?.let {
         URLDecoder.decode(it, "UTF-8")
     } ?: ""
-
 
     val user = Gson().fromJson(decodedUserJson, UserLoginReturn::class.java)
 
@@ -108,19 +110,14 @@ fun EditProfileScreen(navController: NavController) {
     var isOng = user.isOng
 
     val destinationScreen = if (isOng == true) {
-        "profile"
+        "profileOng"
     } else {
         "profileUser"
     }
 
-    val retrofitFactory = RetrofitFactory()
-    val userService = retrofitFactory.create(UserService::class.java)
-
-    val newUser = User(
-        _id = null,
+    val newUser = EditUser(
         name = userName,
         email = userEmail,
-        password = null,
         phone = userPhone,
         residence = userResidence,
         wantToAdopt = userWantAdopt,
@@ -132,7 +129,7 @@ fun EditProfileScreen(navController: NavController) {
         description = userDesc,
         hashtags = null,
         resetToken = "",
-        image = "",
+        image = null,
         isOng = isOng!!,
         adoptedAnimals = null
     )
@@ -322,22 +319,21 @@ fun EditProfileScreen(navController: NavController) {
                         fontTextButton = 20.sp,
                         colorButton = color.orange,
                         onClick = {
-                            userService.editProfile(token, user = newUser,).enqueue(object : Callback<EditResponse> {
+                            userService.editProfile(token, user = newUser).enqueue(object : Callback<EditResponse> {
                                 override fun onResponse(call: Call<EditResponse>, response: Response<EditResponse>) {
                                     if (response.isSuccessful) {
                                         val loginResponse = response.body()
-                                        val userJsonUpdated = Uri.encode(Gson().toJson(loginResponse))
-
-                                        tokenManager.clearUser()
+                                        val updatedUser = loginResponse?.user
+                                        val userJsonUpdated = Uri.encode(Gson().toJson(updatedUser))
 
                                         if (token != null && userJsonUpdated != null) {
+//                                            tokenManager.clearUser()
                                             tokenManager.saveAccessToken(token, userJsonUpdated)
-                                            Toast.makeText(context, "Perfil atualizado com sucesso!", Toast.LENGTH_SHORT).show()
-                                            navController.navigate("$destinationScreen/$token/$userJsonUpdated") {
-                                                navController.popBackStack()
-                                            }
-                                        }
 
+                                            Toast.makeText(context, "Perfil atualizado com sucesso!", Toast.LENGTH_SHORT).show()
+
+                                            navController.navigate(destinationScreen)
+                                        }
 
                                     } else {
                                         val errorBody = response.errorBody()?.string()

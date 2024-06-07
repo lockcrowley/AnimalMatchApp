@@ -50,19 +50,18 @@ import java.net.URLDecoder
 
 @Composable
 fun ProfileUserScreen(navController: NavController) {
-    val poppyns = FontFamily(
-        Font(font.poppins_regular)
-    )
     val context = LocalContext.current.applicationContext
     val tokenManager = TokenManager(context)
     val userJson = tokenManager.getUser()
-
     val decodedUserJson = userJson?.let {
         URLDecoder.decode(it, "UTF-8")
     } ?: ""
-
     val user = Gson().fromJson(decodedUserJson, UserLoginReturn::class.java)
     val adoptedAnimals = user?.adoptedAnimals
+
+    val poppyns = FontFamily(
+        Font(font.poppins_regular)
+    )
 
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,

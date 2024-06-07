@@ -36,16 +36,19 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.HeaderComponent
 import br.com.fiap.animalmatchatt.model.ErrorResponse
 import br.com.fiap.animalmatchatt.model.UserLoginReturn
+import br.com.fiap.animalmatchatt.screens.profileAnimal.ProfileAnimalScreen
 import br.com.fiap.animalmatchatt.screens.adoptionProcess.AdoptionProcessScreen
 import br.com.fiap.animalmatchatt.screens.animalRegister.AnimalRegisterScreen
+import br.com.fiap.animalmatchatt.screens.changePassword.ChangePasswordScreen
 import br.com.fiap.animalmatchatt.screens.confirmProcess.ConfirmationScreen
 import br.com.fiap.animalmatchatt.screens.editAnimal.EditAnimalScreen
 import br.com.fiap.animalmatchatt.screens.editProfile.EditProfileScreen
@@ -248,8 +251,33 @@ fun NavigationDrawerController () {
                         }
                     }
                 )
+                //CHANGE PASSWORD
+                NavigationDrawerItem(
+                    label = { Text(text = "Alterar senha", fontFamily = poppyns, modifier = Modifier
+                        .offset(x = (-15).dp)) },
+                    selected = false,
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = drawable.baseline_lock_person_24),
+                            contentDescription = "",
+                            tint = colorResource(id = color.green_light),
+                            modifier = Modifier
+                                .width(40.dp)
+                                .height(40.dp)
+                                .offset(x = (-10).dp)
+                        )
+                    },
+                    onClick = {
+                        coroutineScope.launch {
+                            drawerState.close()
+                        }
+                        navigationController.navigate(Screens.PasswordChangeScreen.screen) {
+                            popUpTo(0)
+                        }
+                    }
+                )
 
-                Spacer(modifier = Modifier.height(300.dp))
+                Spacer(modifier = Modifier.height(250.dp))
 
                 //LOGOUT
                 NavigationDrawerItem(
@@ -317,16 +345,36 @@ fun NavigationDrawerController () {
         ) {
             NavHost(
                 navController = navigationController,
-                startDestination = initialDestination,
+                startDestination = "registeredAnimals",
             ) {
                 composable(Screens.ProfileUserScreen.screen){ ProfileUserScreen(navigationController) }
                 composable(Screens.ProfileOngScreen.screen){ ProfileOngScreen(navigationController) }
                 composable(Screens.EditScreen.screen){ EditProfileScreen(navigationController) }
-                composable(Screens.RegisteredAnimalScreen.screen){ RegisteredAnimalScreen() }
+                composable(Screens.RegisteredAnimalScreen.screen){ RegisteredAnimalScreen(navigationController) }
                 composable(Screens.AdoptionProcessScreen.screen){ AdoptionProcessScreen() }
-                composable(Screens.AnimalRegisterScreen.screen){ AnimalRegisterScreen() }
+                composable(Screens.AnimalRegisterScreen.screen){ AnimalRegisterScreen(navigationController) }
                 composable(Screens.ConfirmationScreen.screen) { ConfirmationScreen(navigationController) }
-                composable(Screens.EditAnimalScreen.screen) { EditAnimalScreen(navigationController) }
+                composable(Screens.PasswordChangeScreen.screen) { ChangePasswordScreen() }
+                composable(
+                    Screens.EditAnimalScreen.screen,
+                    arguments = listOf(
+                        navArgument(name = "animalJson") {
+                            type = NavType.StringType
+                        })
+                ) {
+                    val animal = it.arguments?.getString("animalJson") ?: ""
+                    EditAnimalScreen(navigationController, animal)
+                }
+                composable(
+                    Screens.ProfileAnimalScreen.screen,
+                            arguments = listOf(
+                                navArgument(name = "animalJson") {
+                                    type = NavType.StringType
+                            })
+                ) {
+                    val animal = it.arguments?.getString("animalJson") ?: ""
+                    ProfileAnimalScreen(navigationController, animal)
+                }
 
                 composable(Screens.LoginUserScreen.screen){ LoginScreen(navigationController) }
             }

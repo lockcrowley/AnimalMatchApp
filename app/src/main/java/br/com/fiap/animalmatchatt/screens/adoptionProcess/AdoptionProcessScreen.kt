@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.sp
 import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.ColumnProcessListComponent
 import br.com.fiap.animalmatchatt.components.ColumnRegisterListComponent
-import br.com.fiap.animalmatchatt.components.HeaderComponent
 import br.com.fiap.animalmatchatt.components.TitleComponent
 import br.com.fiap.animalmatchatt.database.repository.AnimalRepository
 import br.com.fiap.animalmatchatt.repository.getAllAnimalsBySearch

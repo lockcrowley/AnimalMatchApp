@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,37 +22,69 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.ButtonComponent
-import br.com.fiap.animalmatchatt.components.HeaderComponent
 import br.com.fiap.animalmatchatt.components.TextFieldComponent
 import br.com.fiap.animalmatchatt.components.TitleComponent
-import br.com.fiap.animalmatchatt.database.repository.AnimalRepository
-import br.com.fiap.animalmatchatt.model.Animals
+import br.com.fiap.animalmatchatt.model.Animal
+import br.com.fiap.animalmatchatt.model.ErrorResponse
+import br.com.fiap.animalmatchatt.model.User
+import br.com.fiap.animalmatchatt.model.UserLoginReturn
+import br.com.fiap.animalmatchatt.services.AnimalService
+import br.com.fiap.animalmatchatt.services.RetrofitFactory
+import br.com.fiap.animalmatchatt.utils.TokenManager
+import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.net.URLDecoder
 
 @Composable
-fun AnimalRegisterScreen() {
+fun AnimalRegisterScreen(navController: NavController) {
+    val retrofitFactory = RetrofitFactory()
+    val context = LocalContext.current.applicationContext
+    val animalService = retrofitFactory.create(AnimalService::class.java)
+
+    val tokenManager = TokenManager(context)
+    val token = tokenManager.getAccessToken()
+    val userJson = tokenManager.getUser()
+
+    val decodedUserJson = userJson?.let {
+        URLDecoder.decode(it, "UTF-8")
+    } ?: ""
+
+    val user = Gson().fromJson(decodedUserJson, UserLoginReturn::class.java)
 
     var animalName by remember() {
-        mutableStateOf("")
+        mutableStateOf("Ratito")
     }
 
     var animalType by remember {
-        mutableStateOf("")
+        mutableStateOf("Rato")
     }
 
     var animalRace by remember {
-        mutableStateOf("")
+        mutableStateOf("Rato de buero")
     }
 
-    val context = LocalContext.current
-    val animalRepository = AnimalRepository(context)
+    var animalSex by remember {
+        mutableStateOf("Macho")
+    }
 
-    val animal = Animals(
-        id = 0,
+    var animalAge by remember {
+        mutableStateOf("7")
+    }
+
+    val newAnimal = Animal(
+        _id = null,
         name = animalName,
         type = animalType,
-        race = animalRace
+        race = animalRace,
+        sex = animalSex,
+        age = animalAge,
+        image = "",
+        owner = user._id
     )
 
     Column (
@@ -80,56 +112,105 @@ fun AnimalRegisterScreen() {
                 .fillMaxHeight()
                 .background(colorResource(id = color.green_bold)),
         ) {
-            Column (
+            LazyColumn (
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(50.dp))
+                item {
+                    Spacer(modifier = Modifier.height(50.dp))
 
-                TextFieldComponent(
-                    fieldValue = animalName,
-                    onFieldChange = {
-                        animalName = it
-                    },
-                    placeholderValue =  "Nome do pet",
-                    iconImage = painterResource(id = drawable.baseline_pets_24)
-                )
+                    TextFieldComponent(
+                        fieldValue = animalName,
+                        onFieldChange = {
+                            animalName = it
+                        },
+                        placeholderValue =  "Nome do pet",
+                        iconImage = painterResource(id = drawable.baseline_pets_24)
+                    )
 
-                Spacer(modifier = Modifier.height(30.dp))
+                    Spacer(modifier = Modifier.height(30.dp))
 
-                TextFieldComponent(
-                    fieldValue = animalType,
-                    onFieldChange = {
-                        animalType = it
-                    },
-                    placeholderValue =  "Tipo do pet",
-                    iconImage = painterResource(id = drawable.baseline_type_animal_24)
-                )
+                    TextFieldComponent(
+                        fieldValue = animalType,
+                        onFieldChange = {
+                            animalType = it
+                        },
+                        placeholderValue =  "Tipo do pet",
+                        iconImage = painterResource(id = drawable.baseline_type_animal_24)
+                    )
 
-                Spacer(modifier = Modifier.height(30.dp))
+                    Spacer(modifier = Modifier.height(30.dp))
 
-                TextFieldComponent(
-                    fieldValue = animalRace,
-                    onFieldChange = {
-                        animalRace = it
-                    },
-                    placeholderValue =  "Raça do pet",
-                    iconImage = painterResource(id = drawable.sharp_pet_supplies_24)
-                )
+                    TextFieldComponent(
+                        fieldValue = animalRace,
+                        onFieldChange = {
+                            animalRace = it
+                        },
+                        placeholderValue =  "Raça do pet",
+                        iconImage = painterResource(id = drawable.sharp_pet_supplies_24)
+                    )
 
-                Spacer(modifier = Modifier.height(70.dp))
+                    Spacer(modifier = Modifier.height(30.dp))
 
-                ButtonComponent(
-                    textField = "Cadastrar",
-                    fontTextButton = 20.sp,
-                    colorButton = color.orange,
-                    onClick = {
-                        animalRepository.save(animal)
-                        Toast.makeText(context, "Cadastro criado com sucesso!!", Toast.LENGTH_SHORT).show()
-                    }
-                )
+                    TextFieldComponent(
+                        fieldValue = animalSex,
+                        onFieldChange = {
+                            animalSex = it
+                        },
+                        placeholderValue =  "Sexo do pet",
+                        iconImage = painterResource(id = drawable.baseline_type_animal_24)
+                    )
+
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    TextFieldComponent(
+                        fieldValue = animalAge,
+                        onFieldChange = {
+                            animalAge = it
+                        },
+                        placeholderValue =  "Idade do pet",
+                        iconImage = painterResource(id = drawable.dog_resting_on_a_pet_hotel_bed_svgrepo_com)
+                    )
+
+                    Spacer(modifier = Modifier.height(50.dp))
+
+                    ButtonComponent(
+                        textField = "Cadastrar",
+                        fontTextButton = 20.sp,
+                        colorButton = color.orange,
+                        onClick = {
+                            animalService.createAnimal(token, newAnimal).enqueue(object : Callback<Animal> {
+                                override fun onResponse(call: Call<Animal>, response: Response<Animal>) {
+                                    if (response.isSuccessful) {
+                                        Toast.makeText(context, "Animal criado com sucesso!", Toast.LENGTH_SHORT).show()
+                                        navController.navigate("registeredAnimals")
+                                    } else {
+                                        val errorBody = response.errorBody()?.string()
+                                        val errorMessage = if (errorBody != null) {
+                                            try {
+                                                val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+                                                errorResponse.error
+                                            } catch (e: Exception) {
+                                                "Erro ao criar animal"
+                                            }
+                                        } else {
+                                            "Erro ao criar animal"
+                                        }
+                                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<Animal>, t: Throwable) {
+                                    Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            })
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(50.dp))
+                }
             }
         }
     }

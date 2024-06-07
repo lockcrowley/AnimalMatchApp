@@ -42,6 +42,7 @@ import br.com.fiap.animalmatchatt.components.HeaderAuthComponent
 import br.com.fiap.animalmatchatt.components.TextFieldComponent
 import br.com.fiap.animalmatchatt.components.TitleComponent
 import br.com.fiap.animalmatchatt.model.ErrorResponse
+import br.com.fiap.animalmatchatt.model.ForgotPasswordRequest
 import br.com.fiap.animalmatchatt.model.LoginRequest
 import br.com.fiap.animalmatchatt.model.LoginResponse
 import br.com.fiap.animalmatchatt.services.AuthService
@@ -55,6 +56,10 @@ import retrofit2.Response
 
 @Composable
 fun ForgotPasswordScreen (navController: NavController) {
+    val retrofitFactory = RetrofitFactory()
+    val authService = retrofitFactory.create(AuthService::class.java)
+    val context = LocalContext.current.applicationContext
+
     val poppyns = FontFamily(
         Font(font.poppins_regular)
     )
@@ -63,15 +68,9 @@ fun ForgotPasswordScreen (navController: NavController) {
         mutableStateOf("aliferass03@gmail.com")
     }
 
-    val retrofitFactory = RetrofitFactory()
-    val authService = retrofitFactory.create(AuthService::class.java)
-    val context = LocalContext.current.applicationContext
-
-    val tokenManager = TokenManager(context)
-
-//    val loginUser = LoginRequest(
-//        email = userEmail,
-//    )
+    val forgotRequest = ForgotPasswordRequest(
+        email = userEmail,
+    )
 
     Column (
         modifier = Modifier
@@ -135,37 +134,32 @@ fun ForgotPasswordScreen (navController: NavController) {
                     fontTextButton = 20.sp,
                     colorButton = color.orange,
                     onClick = {
-//                        authService.userLogin(loginRequest = loginUser).enqueue(object : Callback<LoginResponse> {
-//                            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-//                                if (response.isSuccessful) {
-//                                    val loginResponse = response.body()
-//                                    val token = loginResponse?.accessToken
-//                                    val user = loginResponse?.user
-//                                    val userJson = Uri.encode(Gson().toJson(user))
-//
-//                                    tokenManager.saveAccessToken(token, userJson)
-//                                    navController.popBackStack()
-//                                    navController.navigate("drawer")
-//                                } else {
-//                                    val errorBody = response.errorBody()?.string()
-//                                    val errorMessage = if (errorBody != null) {
-//                                        try {
-//                                            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-//                                            errorResponse.error
-//                                        } catch (e: Exception) {
-//                                            "Erro ao tentar fazer o login, tente novamente!"
-//                                        }
-//                                    } else {
-//                                        "Erro ao tentar fazer login, tente novamente!"
-//                                    }
-//                                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-//                                }
-//                            }
-//
-//                            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-//                                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-//                            }
-//                        })
+                        authService.forgotPassword(forgotPasswordRequest = forgotRequest).enqueue(object : Callback<Void> {
+                            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                                if (response.isSuccessful) {
+                                    Toast.makeText(context, "E-mail enviado com sucesso!", Toast.LENGTH_SHORT).show()
+                                    navController.popBackStack()
+                                    navController.navigate("reset")
+                                } else {
+                                    val errorBody = response.errorBody()?.string()
+                                    val errorMessage = if (errorBody != null) {
+                                        try {
+                                            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+                                            errorResponse.error
+                                        } catch (e: Exception) {
+                                            "Erro ao tentar enviar e-mail, tente novamente mais tarde!"
+                                        }
+                                    } else {
+                                        "Erro ao tentar enviar e-mail, tente novamente mais tarde!"
+                                    }
+                                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                }
+                            }
+
+                            override fun onFailure(call: Call<Void>, t: Throwable) {
+                                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        })
                     }
                 )
 

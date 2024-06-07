@@ -1,6 +1,7 @@
 package br.com.fiap.animalmatchatt.screens.resetPassword
 
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -41,6 +42,7 @@ import br.com.fiap.animalmatchatt.components.TitleComponent
 import br.com.fiap.animalmatchatt.model.ErrorResponse
 import br.com.fiap.animalmatchatt.model.LoginRequest
 import br.com.fiap.animalmatchatt.model.LoginResponse
+import br.com.fiap.animalmatchatt.model.ResetPasswordRequest
 import br.com.fiap.animalmatchatt.services.AuthService
 import br.com.fiap.animalmatchatt.services.RetrofitFactory
 import br.com.fiap.animalmatchatt.utils.TokenManager
@@ -52,6 +54,10 @@ import retrofit2.Response
 
 @Composable
 fun ResetPasswordScreen (navController: NavController) {
+    val retrofitFactory = RetrofitFactory()
+    val authService = retrofitFactory.create(AuthService::class.java)
+    val context = LocalContext.current.applicationContext
+
     val poppyns = FontFamily(
         Font(font.poppins_regular)
     )
@@ -64,15 +70,10 @@ fun ResetPasswordScreen (navController: NavController) {
         mutableStateOf("")
     }
 
-    val retrofitFactory = RetrofitFactory()
-    val authService = retrofitFactory.create(AuthService::class.java)
-    val context = LocalContext.current.applicationContext
-
-    val tokenManager = TokenManager(context)
-
-//    val loginUser = LoginRequest(
-//        email = userEmail,
-//    )
+    val resetRequest = ResetPasswordRequest(
+        resetToken = token,
+        password = password
+    )
 
     Column (
         modifier = Modifier
@@ -124,10 +125,7 @@ fun ResetPasswordScreen (navController: NavController) {
                         token = it
                     },
                     placeholderValue =  "Token",
-                    iconImage = painterResource(id = drawable.baseline_lock_person_24),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text
-                    ),
+                    iconImage = painterResource(id = drawable.baseline_lock_person_24)
                 )
 
                 Spacer(modifier = Modifier.height(30.dp))
@@ -152,37 +150,33 @@ fun ResetPasswordScreen (navController: NavController) {
                     fontTextButton = 20.sp,
                     colorButton = color.orange,
                     onClick = {
-//                        authService.userLogin(loginRequest = loginUser).enqueue(object : Callback<LoginResponse> {
-//                            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-//                                if (response.isSuccessful) {
-//                                    val loginResponse = response.body()
-//                                    val token = loginResponse?.accessToken
-//                                    val user = loginResponse?.user
-//                                    val userJson = Uri.encode(Gson().toJson(user))
-//
-//                                    tokenManager.saveAccessToken(token, userJson)
-//                                    navController.popBackStack()
-//                                    navController.navigate("drawer")
-//                                } else {
-//                                    val errorBody = response.errorBody()?.string()
-//                                    val errorMessage = if (errorBody != null) {
-//                                        try {
-//                                            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-//                                            errorResponse.error
-//                                        } catch (e: Exception) {
-//                                            "Erro ao tentar fazer o login, tente novamente!"
-//                                        }
-//                                    } else {
-//                                        "Erro ao tentar fazer login, tente novamente!"
-//                                    }
-//                                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-//                                }
-//                            }
-//
-//                            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-//                                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-//                            }
-//                        })
+                        authService.resetPassword(resetPasswordRequest = resetRequest).enqueue(object : Callback<Void> {
+                            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                                if (response.isSuccessful) {
+                                    Toast.makeText(context, "Senha alterada com sucesso!", Toast.LENGTH_SHORT).show()
+                                    navController.popBackStack()
+                                    navController.navigate("login")
+                                } else {
+                                    val errorBody = response.errorBody()?.string()
+                                    Log.d("LoginSuccess", "Token: $response")
+                                    val errorMessage = if (errorBody != null) {
+                                        try {
+                                            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+                                            errorResponse.error
+                                        } catch (e: Exception) {
+                                            "Erro ao tentar resetar senha, tente novamente!"
+                                        }
+                                    } else {
+                                        "Erro ao tentar resetar senha, tente novamente!"
+                                    }
+                                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                }
+                            }
+
+                            override fun onFailure(call: Call<Void>, t: Throwable) {
+                                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        })
                     }
                 )
 

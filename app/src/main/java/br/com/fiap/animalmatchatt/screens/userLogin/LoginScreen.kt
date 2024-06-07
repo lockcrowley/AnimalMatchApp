@@ -52,6 +52,12 @@ import retrofit2.Response
 
 @Composable
 fun LoginScreen (navController: NavController) {
+    val retrofitFactory = RetrofitFactory()
+    val authService = retrofitFactory.create(AuthService::class.java)
+    val context = LocalContext.current.applicationContext
+
+    val tokenManager = TokenManager(context)
+
     val poppyns = FontFamily(
         Font(font.poppins_regular)
     )
@@ -63,12 +69,6 @@ fun LoginScreen (navController: NavController) {
     var userPassword by remember {
         mutableStateOf("12345678")
     }
-
-    val retrofitFactory = RetrofitFactory()
-    val authService = retrofitFactory.create(AuthService::class.java)
-    val context = LocalContext.current.applicationContext
-
-    val tokenManager = TokenManager(context)
 
     val loginUser = LoginRequest(
         email = userEmail,

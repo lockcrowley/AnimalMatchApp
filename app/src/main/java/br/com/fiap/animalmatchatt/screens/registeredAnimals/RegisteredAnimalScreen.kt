@@ -1,5 +1,8 @@
 package br.com.fiap.animalmatchatt.screens.registeredAnimals
 
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +24,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,32 +41,70 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import br.com.fiap.animalmatchatt.R.*
+import br.com.fiap.animalmatchatt.components.ButtonComponent
 import br.com.fiap.animalmatchatt.components.ColumnRegisterListComponent
 import br.com.fiap.animalmatchatt.components.TitleComponent
 import br.com.fiap.animalmatchatt.database.repository.AnimalRepository
-import br.com.fiap.animalmatchatt.repository.getAllAnimalsBySearch
+import br.com.fiap.animalmatchatt.model.Animal
+import br.com.fiap.animalmatchatt.model.AnimalResponse
+import br.com.fiap.animalmatchatt.model.ErrorResponse
+import br.com.fiap.animalmatchatt.services.AnimalService
+import br.com.fiap.animalmatchatt.services.RetrofitFactory
+import br.com.fiap.animalmatchatt.utils.TokenManager
+import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @Composable
-fun RegisteredAnimalScreen () {
+fun RegisteredAnimalScreen (navController: NavController) {
+    val context = LocalContext.current
+    val retrofitFactory = RetrofitFactory()
+    val animalService = retrofitFactory.create(AnimalService::class.java)
+    val tokenManager = TokenManager(context)
+    val token = tokenManager.getAccessToken()
+
+    var listAnimals by remember { mutableStateOf<List<Animal>>(emptyList()) }
 
     var searchTextState by remember {
         mutableStateOf("")
-    }
-
-    var listAnimals by remember {
-        mutableStateOf(getAllAnimalsBySearch(searchTextState))
     }
 
     val poppyns = FontFamily(
         Font(font.poppins_regular)
     )
 
-    val context = LocalContext.current
-    val animalRepository = AnimalRepository(context)
+    LaunchedEffect(Unit) {
+        val call = animalService.getAnimalsByUser(token)
+        call.enqueue(object : Callback<AnimalResponse> {
+            override fun onResponse(call: Call<AnimalResponse>, response: Response<AnimalResponse>) {
+                if (response.isSuccessful) {
+                    listAnimals = response.body()?.animals ?: emptyList()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = if (errorBody != null) {
+                        try {
+                            val errorResponse =
+                                Gson().fromJson(errorBody, ErrorResponse::class.java)
+                            errorResponse.error
 
-    var listAnimalsState = remember {
-        mutableStateOf(animalRepository.listAnimal())
+
+                        } catch (e: Exception) {
+                            "Erro ao buscar animais"
+                        }
+                    } else {
+                        "Erro ao buscar animais"
+                    }
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<AnimalResponse>, t: Throwable) {
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     Column (
@@ -87,7 +129,6 @@ fun RegisteredAnimalScreen () {
                 value = searchTextState,
                 onValueChange = {
                     searchTextState = it
-                    listAnimals = getAllAnimalsBySearch(searchTextState)
                 },
                 modifier = Modifier
                     .width(330.dp)
@@ -99,13 +140,16 @@ fun RegisteredAnimalScreen () {
                 ),
                 placeholder = {
                     Text(
-                        text = "Ache seu pet",
+                        text = "Ache um pet",
                         fontFamily = poppyns,
                         color = colorResource(id = color.gray_title)
                     )
                 },
                 trailingIcon = {
                     IconButton(onClick = {
+                            listAnimals = listAnimals.filter { animal ->
+                            animal.name.contains(searchTextState, ignoreCase = true)
+                        }
                     }) {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -146,18 +190,11 @@ fun RegisteredAnimalScreen () {
             }
 
             Row {
-                LazyColumn(modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    ) {
-                    items(listAnimals) {
+                LazyColumn(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                    items(listAnimals) { animal ->
                         ColumnRegisterListComponent(
-                            animals = it
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-
-                    items(listAnimalsState.value) {
-                        ColumnRegisterListComponent(
-                            animals = it
+                            animal = animal,
+                            navController
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                     }

@@ -1,4 +1,4 @@
-package br.com.fiap.animalmatchatt.screens.ProfileAnimal
+package br.com.fiap.animalmatchatt.screens.profileAnimal
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,15 +25,18 @@ import androidx.navigation.NavController
 import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.ButtonComponent
 import br.com.fiap.animalmatchatt.components.ProfileImageComponent
-import br.com.fiap.animalmatchatt.utils.TokenManager
+import br.com.fiap.animalmatchatt.model.Animal
+import com.google.gson.Gson
 import java.net.URLDecoder
 
 @Composable
-fun ProfileAnimalScreen(navController: NavController) {
+fun ProfileAnimalScreen(navController: NavController, animalJson: String) {
+    val decodedUserJson = URLDecoder.decode(animalJson, "UTF-8")
+    val animal = Gson().fromJson(decodedUserJson, Animal::class.java)
+
     val poppyns = FontFamily(
         Font(font.poppins_regular)
     )
-    val context = LocalContext.current.applicationContext
 
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -57,7 +60,7 @@ fun ProfileAnimalScreen(navController: NavController) {
                 )
 
                 Text(
-                    text = "Gatito",
+                    text = animal.name,
                     color = colorResource(id = color.gray_title),
                     fontFamily = poppyns,
                     fontSize = 30.sp,
@@ -85,7 +88,7 @@ fun ProfileAnimalScreen(navController: NavController) {
                         Spacer(modifier = Modifier.width(10.dp))
 
                         Text(
-                            text = "Gato",
+                            text = animal.type,
                             color = colorResource(id = color.gray_title),
                             fontFamily = poppyns,
                             fontSize = 15.sp,
@@ -106,7 +109,7 @@ fun ProfileAnimalScreen(navController: NavController) {
                         Spacer(modifier = Modifier.width(10.dp))
 
                         Text(
-                            text = "Siames",
+                            text = animal.race,
                             color = colorResource(id = color.gray_title),
                             fontFamily = poppyns,
                             fontSize = 15.sp,
@@ -127,7 +130,7 @@ fun ProfileAnimalScreen(navController: NavController) {
                         Spacer(modifier = Modifier.width(10.dp))
 
                         Text(
-                            text = "Macho",
+                            text = animal.sex,
                             color = colorResource(id = color.gray_title),
                             fontFamily = poppyns,
                             fontSize = 15.sp,
@@ -138,7 +141,7 @@ fun ProfileAnimalScreen(navController: NavController) {
 
                     Row {
                         Text(
-                            text = "Idade",
+                            text = "Idade:",
                             color = colorResource(id = color.gray_title),
                             fontFamily = poppyns,
                             fontSize = 15.sp,
@@ -148,7 +151,7 @@ fun ProfileAnimalScreen(navController: NavController) {
                         Spacer(modifier = Modifier.width(10.dp))
 
                         Text(
-                            text = "9 anos",
+                            text = "${animal.age} anos",
                             color = colorResource(id = color.gray_title),
                             fontFamily = poppyns,
                             fontSize = 15.sp,
@@ -162,7 +165,7 @@ fun ProfileAnimalScreen(navController: NavController) {
                         fontTextButton = 20.sp,
                         colorButton = color.orange,
                         onClick = {
-                            navController.navigate("editAnimal")
+                            navController.navigate("editAnimal/$animalJson")
                         }
                     )
                 }
