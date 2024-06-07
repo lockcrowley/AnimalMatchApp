@@ -1,5 +1,6 @@
 package br.com.fiap.animalmatchatt.screens.profileAnimal
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.ButtonComponent
+import br.com.fiap.animalmatchatt.components.HashtagBoxComponent
 import br.com.fiap.animalmatchatt.components.ProfileImageComponent
 import br.com.fiap.animalmatchatt.model.Animal
 import com.google.gson.Gson
@@ -33,6 +34,8 @@ import java.net.URLDecoder
 fun ProfileAnimalScreen(navController: NavController, animalJson: String) {
     val decodedUserJson = URLDecoder.decode(animalJson, "UTF-8")
     val animal = Gson().fromJson(decodedUserJson, Animal::class.java)
+
+    val animalJsonEncode = Uri.encode(Gson().toJson(animal))
 
     val poppyns = FontFamily(
         Font(font.poppins_regular)
@@ -158,6 +161,22 @@ fun ProfileAnimalScreen(navController: NavController, animalJson: String) {
                         )
                     }
 
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Row {
+                        Text(
+                            text = "Descrição:",
+                            color = colorResource(id = color.gray_title),
+                            fontFamily = poppyns,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+
+                        Spacer(modifier = Modifier.width(10.dp))
+
+                        HashtagBoxComponent(tag = animal.description, idColor = color.orange)
+                    }
+
                     Spacer(modifier = Modifier.height(30.dp))
 
                     ButtonComponent(
@@ -165,7 +184,7 @@ fun ProfileAnimalScreen(navController: NavController, animalJson: String) {
                         fontTextButton = 20.sp,
                         colorButton = color.orange,
                         onClick = {
-                            navController.navigate("editAnimal/$animalJson")
+                            navController.navigate("editAnimal/$animalJsonEncode")
                         }
                     )
                 }

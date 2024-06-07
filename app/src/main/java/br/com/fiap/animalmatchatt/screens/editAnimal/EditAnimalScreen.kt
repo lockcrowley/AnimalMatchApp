@@ -77,6 +77,10 @@ fun EditAnimalScreen(navController: NavController, animalJson: String) {
         mutableStateOf(animal.age)
     }
 
+    var animalDesc by remember {
+        mutableStateOf(animal.description)
+    }
+
     val animalUpdated = Animal(
         _id = null,
         name = animalName,
@@ -84,6 +88,7 @@ fun EditAnimalScreen(navController: NavController, animalJson: String) {
         race = animalRace,
         sex = animalSex,
         age = animalAge,
+        description = animalDesc,
         image = null,
         owner = null
     )
@@ -173,6 +178,17 @@ fun EditAnimalScreen(navController: NavController, animalJson: String) {
                             animalAge = it
                         },
                         placeholderValue =  "Idade do pet",
+                        iconImage = painterResource(id = drawable.dog_resting_on_a_pet_hotel_bed_svgrepo_com)
+                    )
+
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    TextFieldComponent(
+                        fieldValue = animalDesc,
+                        onFieldChange = {
+                            animalDesc = it
+                        },
+                        placeholderValue =  "Descrição do pet",
                         iconImage = painterResource(id = drawable.dog_resting_on_a_pet_hotel_bed_svgrepo_com)
                     )
 

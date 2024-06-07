@@ -45,13 +45,14 @@ import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.HeaderComponent
 import br.com.fiap.animalmatchatt.model.ErrorResponse
 import br.com.fiap.animalmatchatt.model.UserLoginReturn
-import br.com.fiap.animalmatchatt.screens.profileAnimal.ProfileAnimalScreen
+import br.com.fiap.animalmatchatt.screens.adopteAnimal.AdoptAnimalScreen
 import br.com.fiap.animalmatchatt.screens.adoptionProcess.AdoptionProcessScreen
 import br.com.fiap.animalmatchatt.screens.animalRegister.AnimalRegisterScreen
 import br.com.fiap.animalmatchatt.screens.changePassword.ChangePasswordScreen
 import br.com.fiap.animalmatchatt.screens.confirmProcess.ConfirmationScreen
 import br.com.fiap.animalmatchatt.screens.editAnimal.EditAnimalScreen
 import br.com.fiap.animalmatchatt.screens.editProfile.EditProfileScreen
+import br.com.fiap.animalmatchatt.screens.profileAnimal.ProfileAnimalScreen
 import br.com.fiap.animalmatchatt.screens.profileOng.ProfileOngScreen
 import br.com.fiap.animalmatchatt.screens.profileUser.ProfileUserScreen
 import br.com.fiap.animalmatchatt.screens.registeredAnimals.RegisteredAnimalScreen
@@ -146,6 +147,36 @@ fun NavigationDrawerController () {
                 }
 
                 HorizontalDivider()
+                //HOME
+                NavigationDrawerItem(
+                    label = { Text(
+                        text = "Adote um animal",
+                        fontFamily = poppyns,
+                        modifier = Modifier
+                            .offset(x = (-15).dp)
+                    ) },
+                    selected = false,
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = drawable.dog_resting_on_a_pet_hotel_bed_svgrepo_com),
+                            contentDescription = "",
+                            tint = colorResource(id = color.green_light),
+                            modifier = Modifier
+                                .width(40.dp)
+                                .height(40.dp)
+                                .offset(x = (-10).dp)
+                        )
+                    },
+                    onClick = {
+                        coroutineScope.launch {
+                            drawerState.close()
+                        }
+
+                        navigationController.navigate("adoptAnimal") {
+                            popUpTo(0)
+                        }
+                    }
+                )
                 //PROFILE
                 NavigationDrawerItem(
                     label = { Text(
@@ -277,7 +308,7 @@ fun NavigationDrawerController () {
                     }
                 )
 
-                Spacer(modifier = Modifier.height(250.dp))
+                Spacer(modifier = Modifier.height(210.dp))
 
                 //LOGOUT
                 NavigationDrawerItem(
@@ -367,14 +398,16 @@ fun NavigationDrawerController () {
                 }
                 composable(
                     Screens.ProfileAnimalScreen.screen,
-                            arguments = listOf(
-                                navArgument(name = "animalJson") {
-                                    type = NavType.StringType
-                            })
+                    arguments = listOf(
+                        navArgument(name = "animalJson") {
+                            type = NavType.StringType
+                    })
                 ) {
                     val animal = it.arguments?.getString("animalJson") ?: ""
-                    ProfileAnimalScreen(navigationController, animal)
+                    ProfileAnimalScreen(navController = navigationController, animalJson = animal)
                 }
+
+                composable(Screens.AdoptAnimalScreen.screen){ AdoptAnimalScreen(navigationController) }
 
                 composable(Screens.LoginUserScreen.screen){ LoginScreen(navigationController) }
             }

@@ -31,7 +31,7 @@ import br.com.fiap.animalmatchatt.components.CircleButtonComponent
 import br.com.fiap.animalmatchatt.components.ProfileImageComponent
 
 @Composable
-fun AdopteAnimalScreen(navController: NavController) {
+fun AdoptAnimalScreen(navController: NavController) {
     val poppyns = FontFamily(
         Font(font.poppins_regular)
     )
@@ -156,6 +156,22 @@ fun AdopteAnimalScreen(navController: NavController) {
                             fontSize = 15.sp,
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+//                    Row {
+//                        Text(
+//                            text = "Descrição:",
+//                            color = colorResource(id = color.gray_title),
+//                            fontFamily = poppyns,
+//                            fontSize = 15.sp,
+//                            fontWeight = FontWeight.ExtraBold
+//                        )
+//
+//                        Spacer(modifier = Modifier.width(10.dp))
+//
+//                        HashtagBoxComponent(tag = animal.description, idColor = color.orange)
+//                    }
 
                     Spacer(modifier = Modifier.height(30.dp))
 

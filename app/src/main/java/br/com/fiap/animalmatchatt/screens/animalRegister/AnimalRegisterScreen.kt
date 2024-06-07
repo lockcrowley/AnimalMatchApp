@@ -76,6 +76,10 @@ fun AnimalRegisterScreen(navController: NavController) {
         mutableStateOf("7")
     }
 
+    var animalDesc by remember {
+        mutableStateOf("7")
+    }
+
     val newAnimal = Animal(
         _id = null,
         name = animalName,
@@ -83,6 +87,7 @@ fun AnimalRegisterScreen(navController: NavController) {
         race = animalRace,
         sex = animalSex,
         age = animalAge,
+        description = animalDesc,
         image = "",
         owner = user._id
     )
@@ -171,6 +176,17 @@ fun AnimalRegisterScreen(navController: NavController) {
                             animalAge = it
                         },
                         placeholderValue =  "Idade do pet",
+                        iconImage = painterResource(id = drawable.dog_resting_on_a_pet_hotel_bed_svgrepo_com)
+                    )
+
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    TextFieldComponent(
+                        fieldValue = animalDesc,
+                        onFieldChange = {
+                            animalDesc = it
+                        },
+                        placeholderValue =  "Descrição curta do pet",
                         iconImage = painterResource(id = drawable.dog_resting_on_a_pet_hotel_bed_svgrepo_com)
                     )
 

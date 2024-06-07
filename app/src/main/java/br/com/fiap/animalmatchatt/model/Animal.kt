@@ -7,22 +7,13 @@ data class Animal(
     val race: String,
     val sex: String,
     val age: String,
+    val description: String,
     val image: String?,
     val owner: String?
 )
 
 data class AnimalResponse(
     val animals: List<Animal>
-)
-
-data class CreateAnimalRequest(
-    val name: String,
-    val type: String,
-    val race: String,
-    val sex: String,
-    val age: String,
-    val image: String,
-    val owner: String?
 )
 
 data class UpdateAnimalRequest(
