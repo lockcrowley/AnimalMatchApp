@@ -1,5 +1,6 @@
 package br.com.fiap.animalmatchatt.screens.adopteAnimal
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,11 +12,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,14 +36,63 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.CircleButtonComponent
+import br.com.fiap.animalmatchatt.components.HashtagBoxComponent
 import br.com.fiap.animalmatchatt.components.ProfileImageComponent
+import br.com.fiap.animalmatchatt.model.Animal
+import br.com.fiap.animalmatchatt.model.AnimalResponse
+import br.com.fiap.animalmatchatt.model.ErrorResponse
+import br.com.fiap.animalmatchatt.services.AnimalService
+import br.com.fiap.animalmatchatt.services.RetrofitFactory
+import br.com.fiap.animalmatchatt.utils.TokenManager
+import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @Composable
 fun AdoptAnimalScreen(navController: NavController) {
+    val context = LocalContext.current.applicationContext
+    val retrofitFactory = RetrofitFactory()
+    val animalService = retrofitFactory.create(AnimalService::class.java)
+    val tokenManager = TokenManager(context)
+    val token = tokenManager.getAccessToken()
+
+    var listAnimals by remember { mutableStateOf<List<Animal>>(emptyList()) }
+
     val poppyns = FontFamily(
         Font(font.poppins_regular)
     )
-    val context = LocalContext.current.applicationContext
+
+    LaunchedEffect(Unit) {
+        val call = animalService.getAnimalsToAdopt(token)
+        call.enqueue(object : Callback<AnimalResponse> {
+            override fun onResponse(call: Call<AnimalResponse>, response: Response<AnimalResponse>) {
+                if (response.isSuccessful) {
+                    listAnimals = response.body()?.animals ?: emptyList()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = if (errorBody != null) {
+                        try {
+                            val errorResponse =
+                                Gson().fromJson(errorBody, ErrorResponse::class.java)
+                            errorResponse.error
+
+
+                        } catch (e: Exception) {
+                            "Erro ao buscar animais"
+                        }
+                    } else {
+                        "Erro ao buscar animais"
+                    }
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<AnimalResponse>, t: Throwable) {
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -50,156 +107,160 @@ fun AdoptAnimalScreen(navController: NavController) {
             Column (
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ProfileImageComponent(
-                    imageProfile = drawable.white_cat,
-                    description = "Animal",
-                    sizeImage = 250.dp,
-                    imageBorderColor = color.green_light,
-                    borderWidth = 5.dp
-                )
+                LazyRow() {
+                    items(listAnimals) { animal ->
 
-                Text(
-                    text = "Gatito",
-                    color = colorResource(id = color.gray_title),
-                    fontFamily = poppyns,
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    modifier = Modifier.offset(y = (-40).dp)
-                )
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth()
-                        .padding(horizontal = 50.dp)
-                        .offset(y = (-30).dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row {
-                        Text(
-                            text = "Tipo:",
-                            color = colorResource(id = color.gray_title),
-                            fontFamily = poppyns,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.ExtraBold
+                        ProfileImageComponent(
+                            imageProfile = drawable.white_cat,
+                            description = "Animal",
+                            sizeImage = 250.dp,
+                            imageBorderColor = color.green_light,
+                            borderWidth = 5.dp
                         )
 
-                        Spacer(modifier = Modifier.width(10.dp))
-
                         Text(
-                            text = "Gato",
+                            text = animal.name,
                             color = colorResource(id = color.gray_title),
                             fontFamily = poppyns,
-                            fontSize = 15.sp,
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Row {
-                        Text(
-                            text = "Raça:",
-                            color = colorResource(id = color.gray_title),
-                            fontFamily = poppyns,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.ExtraBold
+                            fontSize = 30.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            modifier = Modifier.offset(y = (-40).dp)
                         )
 
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Column(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth()
+                                .padding(horizontal = 50.dp)
+                                .offset(y = (-30).dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Row {
+                                Text(
+                                    text = "Tipo:",
+                                    color = colorResource(id = color.gray_title),
+                                    fontFamily = poppyns,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.ExtraBold
+                                )
 
-                        Text(
-                            text = "Siames",
-                            color = colorResource(id = color.gray_title),
-                            fontFamily = poppyns,
-                            fontSize = 15.sp,
-                        )
-                    }
+                                Spacer(modifier = Modifier.width(10.dp))
 
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Row {
-                        Text(
-                            text = "Sexo:",
-                            color = colorResource(id = color.gray_title),
-                            fontFamily = poppyns,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
-
-                        Spacer(modifier = Modifier.width(10.dp))
-
-                        Text(
-                            text = "Macho",
-                            color = colorResource(id = color.gray_title),
-                            fontFamily = poppyns,
-                            fontSize = 15.sp,
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Row {
-                        Text(
-                            text = "Idade",
-                            color = colorResource(id = color.gray_title),
-                            fontFamily = poppyns,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
-
-                        Spacer(modifier = Modifier.width(10.dp))
-
-                        Text(
-                            text = "9 anos",
-                            color = colorResource(id = color.gray_title),
-                            fontFamily = poppyns,
-                            fontSize = 15.sp,
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-//                    Row {
-//                        Text(
-//                            text = "Descrição:",
-//                            color = colorResource(id = color.gray_title),
-//                            fontFamily = poppyns,
-//                            fontSize = 15.sp,
-//                            fontWeight = FontWeight.ExtraBold
-//                        )
-//
-//                        Spacer(modifier = Modifier.width(10.dp))
-//
-//                        HashtagBoxComponent(tag = animal.description, idColor = color.orange)
-//                    }
-
-                    Spacer(modifier = Modifier.height(30.dp))
-
-                    Row (
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ){
-                        CircleButtonComponent(
-                            iconImage = Icons.Default.Check,
-                            colorButton = color.green_light,
-                            onClick = {
-                                navController.navigate("editAnimal")
+                                Text(
+                                    text = animal.type,
+                                    color = colorResource(id = color.gray_title),
+                                    fontFamily = poppyns,
+                                    fontSize = 15.sp,
+                                )
                             }
-                        )
 
-                        Spacer(modifier = Modifier.width(50.dp))
+                            Spacer(modifier = Modifier.height(6.dp))
 
-                        CircleButtonComponent(
-                            iconImage = Icons.AutoMirrored.Filled.ArrowForward,
-                            colorButton = color.orange,
-                            onClick = {
-                                navController.navigate("editAnimal")
+                            Row {
+                                Text(
+                                    text = "Raça:",
+                                    color = colorResource(id = color.gray_title),
+                                    fontFamily = poppyns,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.ExtraBold
+                                )
+
+                                Spacer(modifier = Modifier.width(10.dp))
+
+                                Text(
+                                    text = animal.race,
+                                    color = colorResource(id = color.gray_title),
+                                    fontFamily = poppyns,
+                                    fontSize = 15.sp,
+                                )
                             }
-                        )
+
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            Row {
+                                Text(
+                                    text = "Sexo:",
+                                    color = colorResource(id = color.gray_title),
+                                    fontFamily = poppyns,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.ExtraBold
+                                )
+
+                                Spacer(modifier = Modifier.width(10.dp))
+
+                                Text(
+                                    text = animal.sex,
+                                    color = colorResource(id = color.gray_title),
+                                    fontFamily = poppyns,
+                                    fontSize = 15.sp,
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            Row {
+                                Text(
+                                    text = "Idade",
+                                    color = colorResource(id = color.gray_title),
+                                    fontFamily = poppyns,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.ExtraBold
+                                )
+
+                                Spacer(modifier = Modifier.width(10.dp))
+
+                                Text(
+                                    text = "${animal.age} anos",
+                                    color = colorResource(id = color.gray_title),
+                                    fontFamily = poppyns,
+                                    fontSize = 15.sp,
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            Row {
+                                Text(
+                                    text = "Descrição:",
+                                    color = colorResource(id = color.gray_title),
+                                    fontFamily = poppyns,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.ExtraBold
+                                )
+
+                                Spacer(modifier = Modifier.width(10.dp))
+
+                                HashtagBoxComponent(tag = animal.description, idColor = color.orange)
+                            }
+
+                            Spacer(modifier = Modifier.height(30.dp))
+
+                            Row (
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ){
+                                CircleButtonComponent(
+                                    iconImage = Icons.Default.Check,
+                                    colorButton = color.green_light,
+                                    onClick = {
+                                        navController.navigate("editAnimal")
+                                    }
+                                )
+
+                                Spacer(modifier = Modifier.width(50.dp))
+
+                                CircleButtonComponent(
+                                    iconImage = Icons.AutoMirrored.Filled.ArrowForward,
+                                    colorButton = color.orange,
+                                    onClick = {
+                                        navController.navigate("editAnimal")
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
-
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }

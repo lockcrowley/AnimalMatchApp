@@ -376,7 +376,7 @@ fun NavigationDrawerController () {
         ) {
             NavHost(
                 navController = navigationController,
-                startDestination = "registeredAnimals",
+                startDestination = "adoptAnimal",
             ) {
                 composable(Screens.ProfileUserScreen.screen){ ProfileUserScreen(navigationController) }
                 composable(Screens.ProfileOngScreen.screen){ ProfileOngScreen(navigationController) }
@@ -404,7 +404,7 @@ fun NavigationDrawerController () {
                     })
                 ) {
                     val animal = it.arguments?.getString("animalJson") ?: ""
-                    ProfileAnimalScreen(navController = navigationController, animalJson = animal)
+                    ProfileAnimalScreen(navigationController, animal)
                 }
 
                 composable(Screens.AdoptAnimalScreen.screen){ AdoptAnimalScreen(navigationController) }

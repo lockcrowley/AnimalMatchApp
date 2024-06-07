@@ -30,7 +30,7 @@ interface AnimalService {
     fun getAnimalsByUser(@Header("Authorization") token: String ?): Call<AnimalResponse>
 
     @GET("animals/animals-to-adopte")
-    fun getAnimalsToAdopte(@Header("Authorization") token: String ?): Call<AnimalResponse>
+    fun getAnimalsToAdopt(@Header("Authorization") token: String ?): Call<AnimalResponse>
 
     @PUT("animals/edit-animal/{id}")
     fun editAnimal(
