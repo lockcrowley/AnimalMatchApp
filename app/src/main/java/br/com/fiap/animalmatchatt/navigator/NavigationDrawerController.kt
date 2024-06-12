@@ -53,6 +53,7 @@ import br.com.fiap.animalmatchatt.screens.confirmProcess.ConfirmationScreen
 import br.com.fiap.animalmatchatt.screens.donationProcess.DonationProcessScreen
 import br.com.fiap.animalmatchatt.screens.editAnimal.EditAnimalScreen
 import br.com.fiap.animalmatchatt.screens.editProfile.EditProfileScreen
+import br.com.fiap.animalmatchatt.screens.profileAdopter.ProfileAdopterScreen
 import br.com.fiap.animalmatchatt.screens.profileAnimal.ProfileAnimalScreen
 import br.com.fiap.animalmatchatt.screens.profileOng.ProfileOngScreen
 import br.com.fiap.animalmatchatt.screens.profileUser.ProfileUserScreen
@@ -402,7 +403,7 @@ fun NavigationDrawerController () {
         ) {
             NavHost(
                 navController = navigationController,
-                startDestination = "adoptAnimal",
+                startDestination = "donationAnimal",
             ) {
                 composable(Screens.ProfileUserScreen.screen){ ProfileUserScreen(navigationController) }
                 composable(Screens.ProfileOngScreen.screen){ ProfileOngScreen(navigationController) }
@@ -432,6 +433,16 @@ fun NavigationDrawerController () {
                 ) {
                     val animal = it.arguments?.getString("animalJson") ?: ""
                     ProfileAnimalScreen(navigationController, animal)
+                }
+                composable(
+                    Screens.ProfileAdopterScreen.screen,
+                    arguments = listOf(
+                        navArgument(name = "userId") {
+                            type = NavType.StringType
+                        })
+                ) {
+                    val userId = it.arguments?.getString("userId") ?: ""
+                    ProfileAdopterScreen(userId)
                 }
 
                 composable(Screens.AdoptAnimalScreen.screen){ AdoptAnimalScreen(navigationController) }

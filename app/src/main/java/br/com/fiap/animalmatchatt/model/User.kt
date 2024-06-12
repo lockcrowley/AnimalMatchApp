@@ -55,6 +55,10 @@ data class LoginResponse(
     val user: UserLoginReturn
 )
 
+data class UserReturn(
+    val user: UserLoginReturn
+)
+
 data class EditResponse(
     val user: UserLoginReturn
 )

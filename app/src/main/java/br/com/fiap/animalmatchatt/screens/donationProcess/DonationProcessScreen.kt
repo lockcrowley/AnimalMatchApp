@@ -1,5 +1,6 @@
 package br.com.fiap.animalmatchatt.screens.donationProcess
 
+import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,30 +42,70 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.com.fiap.animalmatchatt.R.*
+import br.com.fiap.animalmatchatt.components.ColumnProcessDonationComponent
 import br.com.fiap.animalmatchatt.components.ColumnProcessListComponent
 import br.com.fiap.animalmatchatt.components.TitleComponent
-import br.com.fiap.animalmatchatt.database.repository.AnimalRepository
-import br.com.fiap.animalmatchatt.repository.getAllAnimalsBySearch
+import br.com.fiap.animalmatchatt.model.ErrorResponse
+import br.com.fiap.animalmatchatt.model.ProcessAd
+import br.com.fiap.animalmatchatt.model.ProcessResponse
+import br.com.fiap.animalmatchatt.services.ProcessService
+import br.com.fiap.animalmatchatt.services.RetrofitFactory
+import br.com.fiap.animalmatchatt.utils.TokenManager
+import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @Composable
 fun DonationProcessScreen (navController: NavController) {
+    val context = LocalContext.current
+    val retrofitFactory = RetrofitFactory()
+    val processService = retrofitFactory.create(ProcessService::class.java)
+    val tokenManager = TokenManager(context)
+    val token = tokenManager.getAccessToken()
+
+    var listProcess by remember { mutableStateOf<List<ProcessAd>>(emptyList()) }
+
     var searchTextState by remember {
         mutableStateOf("")
-    }
-
-    var listAnimals by remember {
-        mutableStateOf(getAllAnimalsBySearch(searchTextState))
     }
 
     val poppyns = FontFamily(
         Font(font.poppins_regular)
     )
 
-    val context = LocalContext.current
-    val animalRepository = AnimalRepository(context)
+    LaunchedEffect(Unit) {
+        val call = processService.getAnimalsInAdoptionProcess(token)
+        call.enqueue(object : Callback<ProcessResponse> {
+            override fun onResponse(
+                call: Call<ProcessResponse>,
+                response: Response<ProcessResponse>
+            ) {
+                if (response.isSuccessful) {
+                    listProcess = response.body()?.processes ?: emptyList()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = if (errorBody != null) {
+                        try {
+                            val errorResponse =
+                                Gson().fromJson(errorBody, ErrorResponse::class.java)
+                            errorResponse.error
 
-    var listAnimalsState = remember {
-        mutableStateOf(animalRepository.listAnimal())
+
+                        } catch (e: Exception) {
+                            "Erro ao buscar processos"
+                        }
+                    } else {
+                        "Erro ao buscar processos"
+                    }
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ProcessResponse>, t: Throwable) {
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     Column (
@@ -88,7 +130,6 @@ fun DonationProcessScreen (navController: NavController) {
                 value = searchTextState,
                 onValueChange = {
                     searchTextState = it
-                    listAnimals = getAllAnimalsBySearch(searchTextState)
                 },
                 modifier = Modifier
                     .width(330.dp)
@@ -107,6 +148,9 @@ fun DonationProcessScreen (navController: NavController) {
                 },
                 trailingIcon = {
                     IconButton(onClick = {
+                        listProcess = listProcess.filter { process ->
+                            process.animalName.contains(searchTextState, ignoreCase = true)
+                        }
                     }) {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -147,15 +191,16 @@ fun DonationProcessScreen (navController: NavController) {
             }
 
             Row {
-//                LazyColumn(modifier = Modifier.fillMaxWidth().padding(12.dp),
-//                ) {
-//                    items(listAnimals) {
-//                        ColumnProcessListComponent(
-//                            animals = it
-//                        )
-//                        Spacer(modifier = Modifier.height(15.dp))
-//                    }
-//                }
+                LazyColumn(modifier = Modifier.fillMaxWidth().padding(12.dp),
+                ) {
+                    items(listProcess) { process ->
+                        ColumnProcessDonationComponent(
+                            process = process,
+                            navController
+                        )
+                        Spacer(modifier = Modifier.height(15.dp))
+                    }
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ import br.com.fiap.animalmatchatt.model.EditResponse
 import br.com.fiap.animalmatchatt.model.EditUser
 import br.com.fiap.animalmatchatt.model.PasswordChangeRequest
 import br.com.fiap.animalmatchatt.model.User
+import br.com.fiap.animalmatchatt.model.UserReturn
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -11,8 +12,8 @@ interface UserService {
     @GET("users/list")
     fun getUsers(): Call<List<User>>
 
-    @GET("users/list-by-email")
-    fun getUserByEmail(@Query("email") email: String): Call<User>
+    @GET("users/find-user/{id}")
+    fun getUserById(@Path("id") id: String): Call<UserReturn>
 
     @PUT("users/edit")
     fun editProfile(

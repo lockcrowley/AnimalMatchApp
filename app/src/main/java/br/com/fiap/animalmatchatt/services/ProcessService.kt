@@ -25,7 +25,7 @@ interface ProcessService {
     fun getProcessByAnimal(@Path("id") id: String): Call<ProcessAd>
 
     @GET("process/list-process/owner")
-    fun getAnimalsInAdoptionProcess(@Header("Authorization") token: String): Call<ProcessResponse>
+    fun getAnimalsInAdoptionProcess(@Header("Authorization") token: String ?): Call<ProcessResponse>
 
     @PUT("process/update/{id}")
     fun updateProcess(@Path("id") id: String, @Header("Authorization") token: String, @Body process: ProcessAd): Call<ProcessAd>
