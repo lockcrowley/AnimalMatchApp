@@ -50,6 +50,7 @@ import br.com.fiap.animalmatchatt.screens.adoptionProcess.AdoptionProcessScreen
 import br.com.fiap.animalmatchatt.screens.animalRegister.AnimalRegisterScreen
 import br.com.fiap.animalmatchatt.screens.changePassword.ChangePasswordScreen
 import br.com.fiap.animalmatchatt.screens.confirmProcess.ConfirmationScreen
+import br.com.fiap.animalmatchatt.screens.donationProcess.DonationProcessScreen
 import br.com.fiap.animalmatchatt.screens.editAnimal.EditAnimalScreen
 import br.com.fiap.animalmatchatt.screens.editProfile.EditProfileScreen
 import br.com.fiap.animalmatchatt.screens.profileAnimal.ProfileAnimalScreen
@@ -257,6 +258,31 @@ fun NavigationDrawerController () {
                         }
                     }
                 )
+                //DONATION PROCESS
+                NavigationDrawerItem(
+                    label = { Text(text = "Processo de doação", fontFamily = poppyns, modifier = Modifier
+                        .offset(x = (-15).dp)) },
+                    selected = false,
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = drawable.baseline_type_animal_24),
+                            contentDescription = "",
+                            tint = colorResource(id = color.green_light),
+                            modifier = Modifier
+                                .width(40.dp)
+                                .height(40.dp)
+                                .offset(x = (-10).dp)
+                        )
+                    },
+                    onClick = {
+                        coroutineScope.launch {
+                            drawerState.close()
+                        }
+                        navigationController.navigate(Screens.DonationAnimalScreen.screen) {
+                            popUpTo(0)
+                        }
+                    }
+                )
                 //ANIMAL REGISTER
                 NavigationDrawerItem(
                     label = { Text(text = "Cadastrar", fontFamily = poppyns, modifier = Modifier
@@ -308,7 +334,7 @@ fun NavigationDrawerController () {
                     }
                 )
 
-                Spacer(modifier = Modifier.height(210.dp))
+                Spacer(modifier = Modifier.height(170.dp))
 
                 //LOGOUT
                 NavigationDrawerItem(
@@ -383,6 +409,7 @@ fun NavigationDrawerController () {
                 composable(Screens.EditScreen.screen){ EditProfileScreen(navigationController) }
                 composable(Screens.RegisteredAnimalScreen.screen){ RegisteredAnimalScreen(navigationController) }
                 composable(Screens.AdoptionProcessScreen.screen){ AdoptionProcessScreen() }
+                composable(Screens.DonationAnimalScreen.screen){ DonationProcessScreen(navigationController) }
                 composable(Screens.AnimalRegisterScreen.screen){ AnimalRegisterScreen(navigationController) }
                 composable(Screens.ConfirmationScreen.screen) { ConfirmationScreen(navigationController) }
                 composable(Screens.PasswordChangeScreen.screen) { ChangePasswordScreen() }

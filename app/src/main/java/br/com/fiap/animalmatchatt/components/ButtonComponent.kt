@@ -30,7 +30,7 @@ fun ButtonComponent(
     Button(
         onClick = onClick,
         modifier = Modifier
-            .width(300.dp)
+            .width(280.dp)
             .height(55.dp),
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = colorButton))

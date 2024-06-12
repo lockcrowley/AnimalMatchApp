@@ -2,7 +2,6 @@ package br.com.fiap.animalmatchatt.navigator
 
 sealed class Screens (val screen: String) {
 
-    data object CentralNavScreen: Screens("central_navigation")
     data object LoadingScreen: Screens("loading")
     data object AuthNavScreen: Screens("auth")
     data object DrawerScreen: Screens("drawer")
@@ -15,6 +14,7 @@ sealed class Screens (val screen: String) {
     data object EditScreen: Screens("editUser")
     data object RegisteredAnimalScreen: Screens("registeredAnimals")
     data object AdoptionProcessScreen: Screens("adoptionProcess")
+    data object DonationAnimalScreen: Screens("donationAnimal")
     data object AnimalRegisterScreen: Screens("animalRegister")
     data object ConfirmationScreen: Screens("confirmation")
     data object ProfileAnimalScreen: Screens("profileAnimal/{animalJson}")

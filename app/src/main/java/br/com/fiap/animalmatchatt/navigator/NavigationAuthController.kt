@@ -17,7 +17,7 @@ fun NavigationAuthController() {
     val navController = rememberNavController()
         NavHost(
             navController = navController,
-                startDestination = "login",
+            startDestination = "login",
         ) {
             composable(Screens.LoginUserScreen.screen){ LoginScreen(navController) }
             composable(Screens.RegisterUserScreen.screen){ RegisterUsersScreen(navController) }

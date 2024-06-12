@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import br.com.fiap.animalmatchatt.R.*
 
 @Composable
-fun HashtagBoxComponent (
+fun     HashtagBoxComponent (
     tag: String,
     idColor: Int
 ) {
