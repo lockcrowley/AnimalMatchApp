@@ -1,5 +1,6 @@
 package br.com.fiap.animalmatchatt.screens.adopteAnimal
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -45,7 +46,9 @@ import br.com.fiap.animalmatchatt.components.ProfileImageComponent
 import br.com.fiap.animalmatchatt.model.Animal
 import br.com.fiap.animalmatchatt.model.AnimalResponse
 import br.com.fiap.animalmatchatt.model.ErrorResponse
+import br.com.fiap.animalmatchatt.model.ProcessAd
 import br.com.fiap.animalmatchatt.services.AnimalService
+import br.com.fiap.animalmatchatt.services.ProcessService
 import br.com.fiap.animalmatchatt.services.RetrofitFactory
 import br.com.fiap.animalmatchatt.utils.TokenManager
 import com.google.gson.Gson
@@ -58,6 +61,7 @@ fun AdoptAnimalScreen(navController: NavController) {
     val context = LocalContext.current.applicationContext
     val retrofitFactory = RetrofitFactory()
     val animalService = retrofitFactory.create(AnimalService::class.java)
+    val processService = retrofitFactory.create(ProcessService::class.java)
     val tokenManager = TokenManager(context)
     val token = tokenManager.getAccessToken()
 
@@ -80,8 +84,6 @@ fun AdoptAnimalScreen(navController: NavController) {
                             val errorResponse =
                                 Gson().fromJson(errorBody, ErrorResponse::class.java)
                             errorResponse.error
-
-
                         } catch (e: Exception) {
                             "Erro ao buscar animais"
                         }
@@ -134,12 +136,10 @@ fun AdoptAnimalScreen(navController: NavController) {
                                     contentDescription = "Icon arrow down",
                                     tint = colorResource(id = color.black),
                                     modifier = Modifier
-                                        .width(45.dp)
-                                        .height(45.dp)
-                                        .offset(y = 100.dp, x = 30.dp)
+                                        .width(20.dp)
+                                        .height(20.dp)
                                 )
                             }
-
 
                             Text(
                                 text = animal.name,
@@ -260,7 +260,33 @@ fun AdoptAnimalScreen(navController: NavController) {
                                     fontTextButton = 20.sp,
                                     colorButton = color.green_light,
                                     onClick = {
+                                        processService.createProcess(id = animal._id, token).enqueue(object : Callback<ProcessAd> {
+                                            override fun onResponse(call: Call<ProcessAd>, response: Response<ProcessAd>) {
+                                                if (response.isSuccessful) {
+                                                    navController.navigate("confirmation")
+                                                } else {
+                                                    val errorBody = response.errorBody()?.string()
+                                                    val errorMessage = if (errorBody != null) {
+                                                        try {
+                                                            val errorResponse =
+                                                                Gson().fromJson(errorBody, ErrorResponse::class.java)
+                                                            errorResponse.error
 
+
+                                                        } catch (e: Exception) {
+                                                            "Erro ao criar processo"
+                                                        }
+                                                    } else {
+                                                        "Erro ao criar processo"
+                                                    }
+                                                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
+
+                                            override fun onFailure(call: Call<ProcessAd>, t: Throwable) {
+                                                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                                            }
+                                        })
                                     }
                                 )
 

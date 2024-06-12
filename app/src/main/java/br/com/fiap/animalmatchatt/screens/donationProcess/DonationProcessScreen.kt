@@ -147,15 +147,15 @@ fun DonationProcessScreen (navController: NavController) {
             }
 
             Row {
-                LazyColumn(modifier = Modifier.fillMaxWidth().padding(12.dp),
-                ) {
-                    items(listAnimals) {
-                        ColumnProcessListComponent(
-                            animals = it
-                        )
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-                }
+//                LazyColumn(modifier = Modifier.fillMaxWidth().padding(12.dp),
+//                ) {
+//                    items(listAnimals) {
+//                        ColumnProcessListComponent(
+//                            animals = it
+//                        )
+//                        Spacer(modifier = Modifier.height(15.dp))
+//                    }
+//                }
             }
         }
     }

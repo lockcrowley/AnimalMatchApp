@@ -1,6 +1,8 @@
 package br.com.fiap.animalmatchatt.services
 
 import br.com.fiap.animalmatchatt.model.DaysUpdate
+import br.com.fiap.animalmatchatt.model.ProcessAd
+import br.com.fiap.animalmatchatt.model.ProcessResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -10,27 +12,27 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ProcessService {
-    @POST("create/{id}")
-    fun createProcess(@Path("id") id: String, @Header("Authorization") authToken: String): Call<Process>
+    @POST("process/create/{id}")
+    fun createProcess(@Path("id") id: String ?, @Header("Authorization") token: String ?): Call<ProcessAd>
 
-    @GET("list-processes")
-    fun getProcesses(): Call<List<Process>>
+    @GET("process/list-processes")
+    fun getProcesses(): Call<List<ProcessAd>>
 
-    @GET("list-process/adopter")
-    fun getProcessesByAdopter(@Header("Authorization") authToken: String): Call<List<Process>>
+    @GET("process/list-process/adopter")
+    fun getProcessesByAdopter(@Header("Authorization") token: String ?): Call<ProcessResponse>
 
-    @GET("list-process/animal/{id}")
-    fun getProcessByAnimal(@Path("id") id: String): Call<Process>
+    @GET("process/list-process/animal/{id}")
+    fun getProcessByAnimal(@Path("id") id: String): Call<ProcessAd>
 
-    @GET("list-process/owner")
-    fun getAnimalsInAdoptionProcess(@Header("Authorization") authToken: String): Call<List<Process>>
+    @GET("process/list-process/owner")
+    fun getAnimalsInAdoptionProcess(@Header("Authorization") token: String): Call<ProcessResponse>
 
-    @PUT("update/{id}")
-    fun updateProcess(@Path("id") id: String, @Header("Authorization") authToken: String, @Body process: Process): Call<Process>
+    @PUT("process/update/{id}")
+    fun updateProcess(@Path("id") id: String, @Header("Authorization") token: String, @Body process: ProcessAd): Call<ProcessAd>
 
-    @PUT("cancel/{id}")
-    fun cancelProcess(@Path("id") id: String, @Header("Authorization") authToken: String): Call<Process>
+    @PUT("process/cancel/{id}")
+    fun cancelProcess(@Path("id") id: String, @Header("Authorization") token: String): Call<ProcessAd>
 
-    @PUT("update-days/{id}")
-    fun updateProcessDays(@Path("id") id: String, @Body daysUpdate: DaysUpdate): Call<Process>
+    @PUT("process/update-days/{id}")
+    fun updateProcessDays(@Path("id") id: String, @Body daysUpdate: DaysUpdate): Call<ProcessAd>
 }

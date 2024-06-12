@@ -147,7 +147,7 @@ fun RegisteredAnimalScreen (navController: NavController) {
                 },
                 trailingIcon = {
                     IconButton(onClick = {
-                            listAnimals = listAnimals.filter { animal ->
+                        listAnimals = listAnimals.filter { animal ->
                             animal.name.contains(searchTextState, ignoreCase = true)
                         }
                     }) {

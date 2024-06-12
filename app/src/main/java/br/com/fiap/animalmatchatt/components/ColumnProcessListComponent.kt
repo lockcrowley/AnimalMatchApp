@@ -23,11 +23,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.fiap.animalmatchatt.R.*
-import br.com.fiap.animalmatchatt.model.Animals
+import br.com.fiap.animalmatchatt.model.ProcessAd
 
 @Composable
 fun ColumnProcessListComponent (
-    animals: Animals
+    process: ProcessAd
 ) {
     val poppyns = FontFamily(
         Font(font.poppins_regular)
@@ -37,9 +37,9 @@ fun ColumnProcessListComponent (
         mutableStateOf(color.gray_title)
     }
 
-    if (animals.status == "Aprovado") {
+    if (process.status == "Concluido") {
         colorStatus = color.green_light
-    } else if (animals.status == "Pendente") {
+    } else if (process.status == "Pendente") {
         colorStatus = color.orange
     }
 
@@ -56,7 +56,7 @@ fun ColumnProcessListComponent (
                 .offset(x = (-8).dp)
         ) {
             Text(
-                text = animals.name,
+                text = process.animalName,
                 color = colorResource(id = color.gray_title),
                 fontFamily = poppyns,
                 fontSize = 15.sp,
@@ -72,7 +72,7 @@ fun ColumnProcessListComponent (
                 .width(85.dp)
         ) {
             Text(
-                text = animals.time,
+                text = "${process.days} dias",
                 color = colorResource(id = color.gray_title),
                 fontFamily = poppyns,
                 fontSize = 15.sp,
@@ -82,7 +82,7 @@ fun ColumnProcessListComponent (
         Spacer(modifier = Modifier.width(15.dp))
 
         StatusCardComponent(
-            tag = animals.status,
+            tag = process.status,
             idColor = colorStatus
         )
     }
