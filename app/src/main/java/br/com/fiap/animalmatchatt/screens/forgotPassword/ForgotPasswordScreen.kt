@@ -65,7 +65,7 @@ fun ForgotPasswordScreen (navController: NavController) {
     )
 
     var userEmail by remember {
-        mutableStateOf("aliferass03@gmail.com")
+        mutableStateOf("")
     }
 
     val forgotRequest = ForgotPasswordRequest(
