@@ -1,12 +1,19 @@
 package br.com.fiap.animalmatchatt.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,12 +29,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.model.ProcessAd
 
 @Composable
 fun ColumnProcessListComponent (
-    process: ProcessAd
+    process: ProcessAd,
+    navController: NavController
 ) {
     val poppyns = FontFamily(
         Font(font.poppins_regular)
@@ -85,5 +94,28 @@ fun ColumnProcessListComponent (
             tag = process.status,
             idColor = colorStatus
         )
+
+        Spacer(modifier = Modifier.width(15.dp))
+
+        Box (
+            modifier = Modifier
+                .background(color = colorResource(id = color.orange), shape = RoundedCornerShape(12.dp))
+                .height(18.dp)
+                .width(40.dp)
+        ) {
+            IconButton(
+                modifier = Modifier.height(30.dp).width(100.dp),
+                onClick = {
+                    navController.navigate("concluded/${process._id}")
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = "Perfil Icon",
+                    tint = colorResource(id = color.white),
+                    modifier = Modifier.height(70.dp).width(80.dp)
+                )
+            }
+        }
     }
 }

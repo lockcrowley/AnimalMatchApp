@@ -28,10 +28,16 @@ interface ProcessService {
     fun getAnimalsInAdoptionProcess(@Header("Authorization") token: String ?): Call<ProcessResponse>
 
     @PUT("process/update/{id}")
-    fun updateProcess(@Path("id") id: String, @Header("Authorization") token: String, @Body process: ProcessAd): Call<ProcessAd>
+    fun updateProcessToConcluded(
+        @Path("id") id: String,
+        @Header("Authorization") token: String ?
+    ): Call<Void>
 
     @PUT("process/cancel/{id}")
-    fun cancelProcess(@Path("id") id: String, @Header("Authorization") token: String): Call<ProcessAd>
+    fun cancelProcess(
+        @Path("id") id: String,
+        @Header("Authorization") token: String ?
+    ): Call<Void>
 
     @PUT("process/update-days/{id}")
     fun updateProcessDays(@Path("id") id: String, @Body daysUpdate: DaysUpdate): Call<ProcessAd>

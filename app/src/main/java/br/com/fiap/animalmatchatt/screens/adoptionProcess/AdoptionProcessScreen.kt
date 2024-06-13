@@ -39,13 +39,13 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.ColumnProcessListComponent
 import br.com.fiap.animalmatchatt.components.TitleComponent
 import br.com.fiap.animalmatchatt.model.ErrorResponse
 import br.com.fiap.animalmatchatt.model.ProcessAd
 import br.com.fiap.animalmatchatt.model.ProcessResponse
-import br.com.fiap.animalmatchatt.repository.getAllAnimalsBySearch
 import br.com.fiap.animalmatchatt.services.ProcessService
 import br.com.fiap.animalmatchatt.services.RetrofitFactory
 import br.com.fiap.animalmatchatt.utils.TokenManager
@@ -55,7 +55,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 @Composable
-fun AdoptionProcessScreen () {
+fun AdoptionProcessScreen (navController: NavController) {
     val context = LocalContext.current
     val retrofitFactory = RetrofitFactory()
     val processService = retrofitFactory.create(ProcessService::class.java)
@@ -193,7 +193,8 @@ fun AdoptionProcessScreen () {
                 ) {
                     items(listProcess) { process ->
                         ColumnProcessListComponent(
-                            process = process
+                            process = process,
+                            navController
                         )
                         Spacer(modifier = Modifier.height(15.dp))
                     }

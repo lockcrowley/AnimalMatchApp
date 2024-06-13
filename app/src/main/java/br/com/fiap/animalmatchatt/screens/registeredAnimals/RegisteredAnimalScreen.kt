@@ -1,7 +1,5 @@
 package br.com.fiap.animalmatchatt.screens.registeredAnimals
 
-import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -43,10 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.com.fiap.animalmatchatt.R.*
-import br.com.fiap.animalmatchatt.components.ButtonComponent
 import br.com.fiap.animalmatchatt.components.ColumnRegisterListComponent
 import br.com.fiap.animalmatchatt.components.TitleComponent
-import br.com.fiap.animalmatchatt.database.repository.AnimalRepository
 import br.com.fiap.animalmatchatt.model.Animal
 import br.com.fiap.animalmatchatt.model.AnimalResponse
 import br.com.fiap.animalmatchatt.model.ErrorResponse

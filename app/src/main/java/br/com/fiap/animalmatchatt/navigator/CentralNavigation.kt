@@ -23,14 +23,11 @@ fun CentralNavigation(navController: NavHostController) {
         mutableStateOf("loading")
     }
 
-//    tokenManager.clearTokens()
-//    tokenManager.clearUser()
-
     var token by remember { mutableStateOf<String?>(null) }
     var userJson by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(key1 = Unit) {
-        delay(500)
+        delay(1000)
 
         token = tokenManager.getAccessToken()
         if (token == null) {

@@ -56,28 +56,28 @@ fun AnimalRegisterScreen(navController: NavController) {
 
     val user = Gson().fromJson(decodedUserJson, UserLoginReturn::class.java)
 
-    var animalName by remember() {
-        mutableStateOf("Ratito")
+    var animalName by remember {
+        mutableStateOf("")
     }
 
     var animalType by remember {
-        mutableStateOf("Rato")
+        mutableStateOf("")
     }
 
     var animalRace by remember {
-        mutableStateOf("Rato de buero")
+        mutableStateOf("")
     }
 
     var animalSex by remember {
-        mutableStateOf("Macho")
+        mutableStateOf("")
     }
 
     var animalAge by remember {
-        mutableStateOf("7")
+        mutableStateOf("")
     }
 
     var animalDesc by remember {
-        mutableStateOf("7")
+        mutableStateOf("")
     }
 
     val newAnimal = Animal(

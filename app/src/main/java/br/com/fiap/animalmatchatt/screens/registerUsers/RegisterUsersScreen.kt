@@ -10,12 +10,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
@@ -30,9 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -58,7 +51,7 @@ fun RegisterUsersScreen(navController: NavController) {
     val authService = retrofitFactory.create(AuthService::class.java)
     val context = LocalContext.current.applicationContext
 
-    var userName by remember() {
+    var userName by remember {
         mutableStateOf("")
     }
 
@@ -339,6 +332,7 @@ fun RegisterUsersScreen(navController: NavController) {
                                 unselectedColor = Color(0xFFFFFFFF)
                             )
                         )
+
                         Text(text = "Ong", color = colorResource(id = color.white))
 
                         RadioButton(

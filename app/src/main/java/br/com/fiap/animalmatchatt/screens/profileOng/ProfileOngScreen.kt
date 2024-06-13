@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -31,11 +32,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.com.fiap.animalmatchatt.R.*
+import br.com.fiap.animalmatchatt.components.ButtonComponent
 import br.com.fiap.animalmatchatt.components.HashtagBoxComponent
 import br.com.fiap.animalmatchatt.components.ProfileImageComponent
-import br.com.fiap.animalmatchatt.database.repository.AnimalRepository
 import br.com.fiap.animalmatchatt.model.UserLoginReturn
-import br.com.fiap.animalmatchatt.repository.getAllAnimals
 import br.com.fiap.animalmatchatt.utils.TokenManager
 import com.google.gson.Gson
 import java.net.URLDecoder
@@ -46,20 +46,15 @@ fun ProfileOngScreen(navController: NavController) {
     val context = LocalContext.current.applicationContext
     val tokenManager = TokenManager(context)
     val userJson = tokenManager.getUser()
-
-    val decodedUserJson = URLDecoder.decode(userJson, "UTF-8")
+    val decodedUserJson = userJson?.let {
+        URLDecoder.decode(it, "UTF-8")
+    } ?: ""
 
     val user = Gson().fromJson(decodedUserJson, UserLoginReturn::class.java)
-
-    val animalRepository = AnimalRepository(context)
 
     val poppyns = FontFamily(
         Font(font.poppins_regular)
     )
-
-    var listAnimalsState = remember {
-        mutableStateOf(animalRepository.listAnimal())
-    }
 
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -84,17 +79,17 @@ fun ProfileOngScreen(navController: NavController) {
                 ) {
                     Column {
                         Text(
-                            text = user.name,
+                            text = "Ong",
                             color = colorResource(id = color.gray_title),
                             fontFamily = poppyns,
-                            fontSize = 35.sp,
+                            fontSize = 28.sp,
                             fontWeight = FontWeight.ExtraBold
                         )
 
                         Spacer(modifier = Modifier.height(10.dp))
 
                         Text(
-                            text = "Pata Voluntaria",
+                            text = user.name,
                             color = colorResource(id = color.gray_title),
                             fontFamily = poppyns,
                             fontSize = 22.sp,
@@ -112,134 +107,190 @@ fun ProfileOngScreen(navController: NavController) {
                 .offset(y = (-65).dp)
         ) {
             Text(
-                text = "A ONG Pata Voluntária é um grupo dedicado de pessoas que se unem para resgatar e proteger animais em situação de vulnerabilidade.",
+                text = user.description!!,
                 color = colorResource(id = color.gray_title),
                 fontFamily = poppyns,
-                fontSize = 12.sp
+                fontSize = 16.sp
             )
         }
 
-        Box (
+        Column(
             modifier = Modifier
-                .padding(horizontal = 55.dp)
-                .height(90.dp)
-                .width(310.dp)
-                .offset(y = (-50).dp)
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .padding(horizontal = 50.dp)
+                .offset(y = (-30).dp),
+            horizontalAlignment = Alignment.Start
         ) {
-            Row (
-                modifier = Modifier
-                    .wrapContentSize()
-                    .fillMaxWidth()
-            ) {
-                Column {
-                    Row {
-                        HashtagBoxComponent(tag = "#ONG Confiável", idColor = color.orange)
-                        HashtagBoxComponent(tag = "#Mais de 100 doações", idColor = color.orange)
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Row {
-                        HashtagBoxComponent(tag = "#1 ano app", idColor = color.orange)
-                        HashtagBoxComponent(tag = "#Cachorros", idColor = color.green_light)
-                        HashtagBoxComponent(tag = "#Gatos", idColor = color.green_light)
-                    }
+            Box {
+                Row (
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .fillMaxWidth()
+                ) {
+                    HashtagBoxComponent(tag = "#ONG Confiável", idColor = color.orange)
+                    HashtagBoxComponent(tag = "#Cachorros", idColor = color.green_light)
+                    HashtagBoxComponent(tag = "#Gatos", idColor = color.green_light)
                 }
             }
-        }
 
-        Box (
-            modifier = Modifier
-                .padding(horizontal = 50.dp)
-                .offset(y = (-65).dp, x = (-48).dp)
-        ) {
-            Row (verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painter = painterResource(id = drawable.baseline_arrow_drop_down_circle_24),
-                    contentDescription = "Icon arrow down",
-                    tint = colorResource(id = color.orange),
-                    modifier = Modifier
-                        .width(20.dp)
-                        .height(20.dp)
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Box {
+                Row (verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(id = drawable.baseline_arrow_drop_down_circle_24),
+                        contentDescription = "Icon arrow down",
+                        tint = colorResource(id = color.orange),
+                        modifier = Modifier
+                            .width(20.dp)
+                            .height(20.dp)
+                    )
+
+                    Text(
+                        text = "Dados da Ong",
+                        color = colorResource(id = color.orange),
+                        fontFamily = poppyns,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+
+            Row {
+                Text(
+                    text = "Logradouro:",
+                    color = colorResource(id = color.gray_title),
+                    fontFamily = poppyns,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.ExtraBold
                 )
+
+                Spacer(modifier = Modifier.width(10.dp))
 
                 Text(
-                    text = "Animais em adoção",
-                    color = colorResource(id = color.orange),
+                    text = user.address.street,
+                    color = colorResource(id = color.gray_title),
                     fontFamily = poppyns,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    fontSize = 15.sp,
                 )
             }
-        }
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+            Spacer(modifier = Modifier.height(6.dp))
 
-            LazyColumn(
-                modifier = Modifier
-                    .offset(y = (-40).dp, x = (18).dp)
-            ) {
-                items(getAllAnimals().chunked(3)) {
-                    Row (horizontalArrangement = Arrangement.SpaceAround) {
-                        for (animal in it) {
-                            ProfileImageComponent(
-                                imageProfile = animal.imageAnimal,
-                                description = animal.name,
-                                sizeImage = 70.dp,
-                                imageBorderColor = color.green_light,
-                                borderWidth = 2.dp,
-                                nameProfile = animal.name,
-                                nameProfileFontSize = 12.sp
-                            )
+            Row {
+                Text(
+                    text = "Cidade:",
+                    color = colorResource(id = color.gray_title),
+                    fontFamily = poppyns,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
 
-                            Spacer(modifier = Modifier.width(30.dp))
-                        }
-                    }
-                }
+                Spacer(modifier = Modifier.width(10.dp))
 
-                // Room DB Itens
-                items(listAnimalsState.value.chunked(3)) {
-                    Row (horizontalArrangement = Arrangement.SpaceAround) {
-                        for (animal in it) {
-                            ProfileImageComponent(
-                                imageProfile = animal.imageAnimal,
-                                description = animal.name,
-                                sizeImage = 70.dp,
-                                imageBorderColor = color.green_light,
-                                borderWidth = 2.dp,
-                                nameProfile = animal.name,
-                                nameProfileFontSize = 12.sp
-                            )
-
-                            Spacer(modifier = Modifier.width(30.dp))
-                        }
-                    }
-                }
+                Text(
+                    text = user.address.city,
+                    color = colorResource(id = color.gray_title),
+                    fontFamily = poppyns,
+                    fontSize = 15.sp,
+                )
             }
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Row {
+                Text(
+                    text = "Estado:",
+                    color = colorResource(id = color.gray_title),
+                    fontFamily = poppyns,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                Text(
+                    text = user.address.state,
+                    color = colorResource(id = color.gray_title),
+                    fontFamily = poppyns,
+                    fontSize = 15.sp,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Row {
+                Text(
+                    text = "Celular:",
+                    color = colorResource(id = color.gray_title),
+                    fontFamily = poppyns,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                Text(
+                    text = user.phone,
+                    color = colorResource(id = color.gray_title),
+                    fontFamily = poppyns,
+                    fontSize = 15.sp,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Row {
+                Text(
+                    text = "Residência:",
+                    color = colorResource(id = color.gray_title),
+                    fontFamily = poppyns,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                Text(
+                    text = user.residence,
+                    color = colorResource(id = color.gray_title),
+                    fontFamily = poppyns,
+                    fontSize = 15.sp,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Row {
+                Text(
+                    text = "E-mail:",
+                    color = colorResource(id = color.gray_title),
+                    fontFamily = poppyns,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                Text(
+                    text = user.email,
+                    color = colorResource(id = color.gray_title),
+                    fontFamily = poppyns,
+                    fontSize = 15.sp,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            ButtonComponent(
+                textField = "Editar Perfil",
+                fontTextButton = 20.sp,
+                colorButton = color.orange,
+                onClick = {
+                    navController.navigate("editUser")
+                }
+            )
         }
-    }
-
-    Box (
-        modifier = Modifier
-            .offset(y = (620).dp, x = (145).dp)
-    ) {
-        Icon(
-            painter = painterResource(id = drawable.baseline_arrow_downward_24),
-            contentDescription = "",
-            tint = colorResource(id = color.gray_title),
-        )
-    }
-
-    Box (
-        modifier = Modifier
-            .offset(y = (620).dp, x = (245).dp)
-    ) {
-        Icon(
-            painter = painterResource(id = drawable.baseline_arrow_downward_24),
-            contentDescription = "",
-            tint = colorResource(id = color.gray_title),
-        )
     }
 }

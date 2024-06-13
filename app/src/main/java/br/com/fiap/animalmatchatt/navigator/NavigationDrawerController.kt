@@ -1,6 +1,9 @@
 package br.com.fiap.animalmatchatt.navigator
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,10 +48,11 @@ import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.HeaderComponent
 import br.com.fiap.animalmatchatt.model.ErrorResponse
 import br.com.fiap.animalmatchatt.model.UserLoginReturn
-import br.com.fiap.animalmatchatt.screens.adopteAnimal.AdoptAnimalScreen
+import br.com.fiap.animalmatchatt.screens.adoptAnimal.AdoptAnimalScreen
 import br.com.fiap.animalmatchatt.screens.adoptionProcess.AdoptionProcessScreen
 import br.com.fiap.animalmatchatt.screens.animalRegister.AnimalRegisterScreen
 import br.com.fiap.animalmatchatt.screens.changePassword.ChangePasswordScreen
+import br.com.fiap.animalmatchatt.screens.confirmAdoptionConcluded.ConfirmAdoptionToConcludedScreen
 import br.com.fiap.animalmatchatt.screens.confirmProcess.ConfirmationScreen
 import br.com.fiap.animalmatchatt.screens.donationProcess.DonationProcessScreen
 import br.com.fiap.animalmatchatt.screens.editAnimal.EditAnimalScreen
@@ -68,6 +72,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.net.URLDecoder
+import kotlin.system.exitProcess
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -76,6 +81,7 @@ fun NavigationDrawerController () {
     val coroutineScope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val context = LocalContext.current.applicationContext
+    val activity = (context as? Activity)
     val retrofitFactory = RetrofitFactory()
     val authService = retrofitFactory.create(AuthService::class.java)
     val tokenManager = TokenManager(context)
@@ -98,7 +104,6 @@ fun NavigationDrawerController () {
     } else {
         "profileUser"
     }
-
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -359,11 +364,12 @@ fun NavigationDrawerController () {
                                 if (response.isSuccessful) {
                                     tokenManager.clearUser()
                                     tokenManager.clearTokens()
-
                                     Toast.makeText(context, "Logout", Toast.LENGTH_SHORT).show()
-                                    navigationController.navigate("login"){
-                                        popUpTo(0)
-                                    }
+
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        activity?.finishAffinity()
+                                        exitProcess(0)
+                                    }, 1000)
                                 }  else {
                                     val errorBody = response.errorBody()?.string()
                                     val errorMessage = if (errorBody != null) {
@@ -403,13 +409,13 @@ fun NavigationDrawerController () {
         ) {
             NavHost(
                 navController = navigationController,
-                startDestination = "donationAnimal",
+                startDestination = "adoptAnimal",
             ) {
                 composable(Screens.ProfileUserScreen.screen){ ProfileUserScreen(navigationController) }
                 composable(Screens.ProfileOngScreen.screen){ ProfileOngScreen(navigationController) }
                 composable(Screens.EditScreen.screen){ EditProfileScreen(navigationController) }
                 composable(Screens.RegisteredAnimalScreen.screen){ RegisteredAnimalScreen(navigationController) }
-                composable(Screens.AdoptionProcessScreen.screen){ AdoptionProcessScreen() }
+                composable(Screens.AdoptionProcessScreen.screen){ AdoptionProcessScreen(navigationController) }
                 composable(Screens.DonationAnimalScreen.screen){ DonationProcessScreen(navigationController) }
                 composable(Screens.AnimalRegisterScreen.screen){ AnimalRegisterScreen(navigationController) }
                 composable(Screens.ConfirmationScreen.screen) { ConfirmationScreen(navigationController) }
@@ -443,6 +449,16 @@ fun NavigationDrawerController () {
                 ) {
                     val userId = it.arguments?.getString("userId") ?: ""
                     ProfileAdopterScreen(userId)
+                }
+                composable(
+                    Screens.ConfirmToConcludedScreen.screen,
+                    arguments = listOf(
+                        navArgument(name = "processId") {
+                            type = NavType.StringType
+                        })
+                ) {
+                    val processId = it.arguments?.getString("processId") ?: ""
+                    ConfirmAdoptionToConcludedScreen(processId)
                 }
 
                 composable(Screens.AdoptAnimalScreen.screen){ AdoptAnimalScreen(navigationController) }

@@ -22,4 +22,5 @@ sealed class Screens (val screen: String) {
     data object PasswordChangeScreen: Screens("changePassword")
     data object AdoptAnimalScreen: Screens("adoptAnimal")
     data object ProfileAdopterScreen: Screens("adopter/{userId}")
+    data object ConfirmToConcludedScreen: Screens("concluded/{processId}")
 }

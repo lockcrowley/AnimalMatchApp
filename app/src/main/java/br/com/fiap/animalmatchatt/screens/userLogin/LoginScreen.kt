@@ -63,11 +63,11 @@ fun LoginScreen (navController: NavController) {
     )
 
     var userEmail by remember {
-        mutableStateOf("aliferass03@gmail.com")
+        mutableStateOf("")
     }
 
     var userPassword by remember {
-        mutableStateOf("12345678")
+        mutableStateOf("")
     }
 
     val loginUser = LoginRequest(

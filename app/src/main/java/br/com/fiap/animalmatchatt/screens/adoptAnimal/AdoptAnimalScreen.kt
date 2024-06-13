@@ -1,9 +1,6 @@
-package br.com.fiap.animalmatchatt.screens.adopteAnimal
+package br.com.fiap.animalmatchatt.screens.adoptAnimal
 
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,9 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.com.fiap.animalmatchatt.R.*
 import br.com.fiap.animalmatchatt.components.ButtonComponent
-import br.com.fiap.animalmatchatt.components.CircleButtonComponent
 import br.com.fiap.animalmatchatt.components.HashtagBoxComponent
 import br.com.fiap.animalmatchatt.components.ProfileImageComponent
 import br.com.fiap.animalmatchatt.model.Animal
@@ -124,7 +117,7 @@ fun AdoptAnimalScreen(navController: NavController) {
                         ) {
                             Row {
                                 ProfileImageComponent(
-                                    imageProfile = drawable.white_cat,
+                                    imageProfile = drawable.animal_default,
                                     description = "Animal",
                                     sizeImage = 250.dp,
                                     imageBorderColor = color.green_light,
