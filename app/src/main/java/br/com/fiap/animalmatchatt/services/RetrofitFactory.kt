@@ -4,8 +4,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitFactory {
-
-    private val URL = "http://192.168.15.36:3333/api/"
+    //Alterar para o IP da maquina de quem estiver ligando o projeto
+    //Exemplo: "http://192.168.1.1:3333/api/"
+    private val URL = "http://SEUIP:SUAPORTA/api/"
 
     private val retrofitFactory = Retrofit
         .Builder()
